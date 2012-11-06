@@ -15,5 +15,5 @@ La finalidad de publicar este código no es tanto que se pueda ejecutar el progr
 que desarrollen herramientas similares en Java.
 
 Para compilar es necesario :
-- el driver jdbc de posgres,
+- el driver jdbc de postgresql,
 - commons-lang
