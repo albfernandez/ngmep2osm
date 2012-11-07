@@ -11,6 +11,7 @@
 	<property name="src.dir" value="./src" />
 	<property name="jar.file" value="ngmep2osm-${version}" />
 	<property name="jar.file.name" value="dist/${jar.file}.jar" />
+	<property name="checkstyle.config" value="/opt/java/checkstyle/checkstyle.xml"/>
 	<property name="commons-lang.jar" value="/usr/share/java/commons-lang3.jar"/>
 	
 	<path id="project.class.path">
@@ -131,7 +132,7 @@
 		</target> 
 		
 		<target name="checkstyle" depends="prep" >
-			<checkstyle failOnViolation="false">
+			<checkstyle config="${checkstyle.config}" failOnViolation="false">
 				<fileset dir="${src.dir}" includes="**/*.java"/>
 				<formatter type="xml" toFile="${report.dir}/checkstyle.xml"/>
 			</checkstyle>
