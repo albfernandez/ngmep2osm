@@ -1,0 +1,171 @@
+<project name="ngmep2osm" default="main" basedir=".">
+
+
+	<property environment="env" />
+
+	<property file="./build.properties" />
+
+	<property name="version" value="20121007" />
+	<property name="build.compiler" value="modern" />
+	<property name="build.dir" value="./classes" />
+	<property name="src.dir" value="./src" />
+	<property name="jar.file" value="ngmep2osm-${version}" />
+	<property name="jar.file.name" value="dist/${jar.file}.jar" />
+	<property name="commons-lang.jar" value="/usr/share/java/commons-lang3.jar"/>
+	
+	<path id="project.class.path">
+		<pathelement path="${commons-lang.jar}" />
+	</path>
+	
+	
+	<property name="junit.jar" value="/usr/share/java/junit4.jar"/>
+	<property name="qunit.dir" value="/opt/java/qunit-test-runner/"/>
+	<property name="qunit.jar" value="qunit-test-runner-0.0.1-SNAPSHOT-jar-with-dependencies.jar"/>
+	
+
+	<property name = "report.dir" value = "reports" />
+	<property name = "instrumented.dir" value="cobertura_instrumented"/>
+	<property name = "junit.build.dir" value = "junitClasses" />
+
+	
+	<path id="cobertura.classpath">
+	    <fileset dir="/usr/share/java/">
+	        <include name="cobertura.jar" />
+	    </fileset>
+	</path>
+	<path id="qunit-test-runner.path">
+	  <fileset dir="${qunit.dir}">
+	    <include name="${qunit.jar}" />
+	  </fileset>
+	</path>
+	
+	<taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+
+	
+	<taskdef resource="checkstyletask.properties"  classpath="/usr/share/java/checkstyle.jar:/usr/share/java/commons-beanutils.jar:/usr/share/java/commons-logging.jar:/usr/share/java/antlr.jar"/>
+	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="/opt/java/findbugs/findbugs.jar:/opt/java/findbugs-ant.jar"/>
+	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="/opt/java/pmd-4.2.5/pmd-4.2.5.jar"/>
+	<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpath="/opt/java/pmd-4.2.5/pmd-4.2.5.jar"/>
+	<taskdef resource="simiantask.properties" classpath="/opt/java/simian/simian.jar"/>
+	<taskdef classpathref="qunit-test-runner.path" resource="tasks.properties"/>  
+	
+	
+	
+	
+	<target name="main" depends="clean, prep, compile, jar">
+		
+	</target>
+	
+	<target name="jenkins" depends="main,checkstyle,findbugs,pmd,cpd,simian">
+		
+	</target>
+	
+	<target name="clean">
+			<delete dir="${build.dir}" includeEmptyDirs="true" />
+			<delete dir="${report.dir}" includeEmptyDirs="true" />
+			<delete dir="${junit.build.dir}" includeEmptyDirs="true" />
+			<delete dir="${instrumented.dir}" includeEmptyDirs="true" />
+			<delete file="${basedir}/cobertura.ser"/>
+		</target>
+
+		<target name="prep">
+			<mkdir dir="${build.dir}" />
+			<mkdir dir="${report.dir}" />
+			<mkdir dir="${junit.build.dir}" />
+			<mkdir dir="${instrumented.dir}"/>
+		</target>
+	<target name="compile">
+		<mkdir dir="${build.dir}"/>
+		<javac srcdir="src" source="1.7" target="1.7" debug="on" deprecation="on" includeantruntime="false" destdir="${build.dir}">
+			<include name="**/*.java" />
+			<classpath refid="project.class.path" />
+		</javac>		
+	</target>
+	<target name="jar">
+		<jar destfile="${jar.file.name}">
+			<fileset dir="${build.dir}" includes="**/*"/>
+		</jar>
+	</target>
+	 <target name = "junit" depends = "compile">
+				<javac  srcdir="${src.dir}" 
+		                encoding = "ISO-8859-1"
+		                destdir = "${junit.build.dir}"
+		                classpathref = "project.class.path"
+		                debug = "on"
+		                deprecation = "on"
+		                optimize = "on"
+						includeantruntime="false">
+					<include name="net/sf/ucheck/tests/**/*.java" />
+		            
+		        </javac>
+			<cobertura-instrument todir="${instrumented.dir}">
+			    <ignore regex="org.apache.log4j.*" />
+			    <fileset dir="${build.dir}">
+			        <include name="**/*.class" />
+			        <exclude name="**/*Test*.class" />
+			    </fileset>
+			</cobertura-instrument>
+		
+
+
+	        <junit fork="yes" printsummary="yes" haltonfailure="false" showoutput="true" filtertrace="false" >
+				<sysproperty key="net.sourceforge.cobertura.datafile" file="${basedir}/cobertura.ser" />
+				<classpath location="${instrumented.dir}" />
+				<classpath refid="project.class.path" />
+	        	<classpath refid="cobertura.classpath" />
+
+		        <batchtest todir="${report.dir}" haltonfailure="false">        	
+		        	<fileset dir="${junit.build.dir}" includes="**/*Test*.class" />
+		            <formatter type="xml" />
+		        </batchtest>
+	    	</junit>
+			<cobertura-report format="xml" destdir="${report.dir}" srcdir="${src.dir}" />
+
+	    </target>
+		
+		<target name="qunit" depends="prep">
+		  <qunit qunitTestFilePattern=".*Test\\.js"
+		         baseDirectory="jstests/"
+		         reportDirectory="${report.dir}">
+		  </qunit>  
+		</target> 
+		
+		<target name="checkstyle" depends="prep" >
+			<checkstyle config="config_checks/checkstyle.xml" failOnViolation="false">
+				<fileset dir="${src.dir}" includes="**/*.java"/>
+				<formatter type="xml" toFile="${report.dir}/checkstyle.xml"/>
+			</checkstyle>
+		</target>	
+		<target name="findbugs" depends="jar" >
+			<findbugs home="/opt/java/findbugs/" output="xml" outputFile="${report.dir}/findbugs.xml" >
+				<class location="${jar.file.name}"/>
+				<auxClasspath path="/usr/share/java/commons-validator.jar"/>
+				<sourcePath path="${src.dir}" />
+				
+			</findbugs>
+		</target>
+		<target name="pmd" depends="prep">
+			<pmd rulesetfiles="config_checks/pmd.xml">
+				<fileset dir="${src.dir}">
+				            <include name="**/*.java"/>
+				</fileset>
+				<formatter type="xml" toFile="${report.dir}/pmd.xml"/>
+			</pmd>
+		</target>
+		
+		<target name="cpd" depends="prep">
+		<cpd minimumTokenCount="70" format="xml" outputFile="${report.dir}/cpd.xml">
+		        <fileset dir="${src.dir}">
+		            <include name="**/*.java"/>	 
+		        	<exclude name="**/*Test.java"/>	        	
+		        </fileset>
+		 </cpd>
+		</target>
+		<target name="simian" depends="prep">
+		    <simian>
+				<fileset dir="${src.dir}" includes="**/*.java" excludes="**/*Test.java"/>
+		    	<formatter type="xml" toFile="${report.dir}/simian.xml"/>
+		    </simian>
+		</target>
+
+</project>
