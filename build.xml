@@ -131,7 +131,7 @@
 		</target> 
 		
 		<target name="checkstyle" depends="prep" >
-			<checkstyle config="config_checks/checkstyle.xml" failOnViolation="false">
+			<checkstyle failOnViolation="false">
 				<fileset dir="${src.dir}" includes="**/*.java"/>
 				<formatter type="xml" toFile="${report.dir}/checkstyle.xml"/>
 			</checkstyle>
