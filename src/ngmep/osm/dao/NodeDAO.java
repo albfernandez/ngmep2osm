@@ -29,8 +29,7 @@ import java.util.List;
 
 import ngmep.osm.datamodel.Node;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class NodeDAO extends AbstractEntityDAO {
     
@@ -125,11 +124,11 @@ public class NodeDAO extends AbstractEntityDAO {
         String query = "select id, version, user_id, tstamp, changeset_id, st_x(geom) as lon, st_y(geom) as lat from nodes n ";
         query += " where 1=1 and n.id > 0 ";
         if (!StringUtils.isBlank(key)){
-            query += " and  exists (select 1 from node_tags t where t.node_id = n.id and t.k='" + StringEscapeUtils.escapeSql(key) + "'";
+            query += " and  exists (select 1 from node_tags t where t.node_id = n.id and t.k= ? ";
             if (values != null && values.length > 0){
                 query += " and t.v in ('___dummy'";
-                for (String valor: values){
-                    query += ", '" + StringEscapeUtils.escapeSql(valor) + "'";
+                for (int i = 0; i < values.length; i++){
+                    query += ", ? ";
                 }
                 query+=")";
             }
@@ -137,9 +136,19 @@ public class NodeDAO extends AbstractEntityDAO {
         }
         query += " and st_distance(st_setsrid(st_point(?,?),4326), geom) < ?";
         PreparedStatement ps = Database.getConnection().prepareStatement(query);
-        ps.setDouble(1, lon);
-        ps.setDouble(2, lat);
-        ps.setDouble(3, distance);
+        int indice = 1;
+        
+        if (!StringUtils.isBlank(key)){
+        	ps.setString(indice++, key);
+        	if (values != null){
+        		for (String valor : values) {
+        			ps.setString(indice++, valor);
+        		}
+        	}
+        }
+        ps.setDouble(indice++, lon);
+        ps.setDouble(indice++, lat);
+        ps.setDouble(indice++, distance);
         ResultSet rs = ps.executeQuery();
         
         List<Node> lista = getNodes(rs);

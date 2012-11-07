@@ -20,7 +20,7 @@ package ngmep.procesos;
 
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class ComparaCadenas {
     private static final Locale LOCALE_ES = new Locale("ES", "es");

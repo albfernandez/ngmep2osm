@@ -21,9 +21,7 @@ package ngmep.main;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import ngmep.procesos.Objetivo3;
-
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 
 public class Main {
 
@@ -37,9 +35,9 @@ public class Main {
         StopWatch cronometro = new StopWatch();
         cronometro.start();
         
-//        ngmep.procesos.BuscaAsignaIds.buscaOsmId();
+        ngmep.procesos.BuscaAsignaIds.buscaOsmId();
         ngmep.procesos.Objetivo3.ejecutaObjetivo3();
-        //ngmep.procesos.Objetivo4.ejecutaObjetivo4();
+        ngmep.procesos.Objetivo4.ejecutaObjetivo4();
         
         cronometro.stop();
         System.out.println("Tiempo empleado:" + cronometro);

@@ -43,7 +43,7 @@ import ngmep.osm.datamodel.Node;
 import ngmep.osm.datamodel.Way;
 import ngmep.xml.XMLExporter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class Objetivo3 {
     
@@ -248,7 +248,7 @@ public class Objetivo3 {
         if (nodos.size() > 0){
             String nombreArchivo = Config.getOsmDir() + "/ine/subir.objetivo3." +fecha+  ".osm.gz";
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
-            XMLExporter.export((List)nodos, salida, false);
+            XMLExporter.export(nodos, salida, false);
             salida.close();
             System.out.println("Generado el archivo (" + nodos.size() + "):"+nombreArchivo);
         }
@@ -258,7 +258,7 @@ public class Objetivo3 {
         if (errores.size() > 0) {
             String nombreArchivo = Config.getOsmDir() + "/ine/errores.objetivo3." +fecha+  ".osm.gz";
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
-            XMLExporter.export((List)errores, salida, true);
+            XMLExporter.export(errores, salida, true);
             salida.close();
             System.out.println("Generado el archivo(" + errores.size() + "):"+nombreArchivo);
         }

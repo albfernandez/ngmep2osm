@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import ngmep.config.Config;
 import ngmep.ngmep.dao.EntidadDAO;
@@ -94,7 +94,7 @@ public class Objetivo4 {
         if (municipios.size() > 0){
             String nombreArchivo = Config.getOsmDir() + "/ine/subir.objetivo4." +fecha+  ".osm.gz";
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
-            XMLExporter.export((List)municipios, salida, false);
+            XMLExporter.export(municipios, salida, false);
             salida.close();
             System.out.println("Generado el archivo objetivo4 (" + municipios.size() + "):"+nombreArchivo);
         }

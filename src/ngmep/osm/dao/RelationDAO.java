@@ -29,7 +29,7 @@ import java.util.List;
 import ngmep.osm.datamodel.Relation;
 import ngmep.osm.datamodel.RelationMember;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class RelationDAO extends AbstractEntityDAO{
     public static final String QUERY_BASE = 
