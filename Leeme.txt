@@ -1,0 +1,23 @@
+
+
+
+
+CREATE TABLE poblaciones_osm (
+    id bigint NOT NULL,
+    version int NOT NULL,
+    user_id int NOT NULL,
+    tstamp timestamp without time zone NOT NULL,
+    changeset_id bigint NOT NULL
+);
+
+SELECT AddGeometryColumn('poblaciones_osm', 'geom', 4326, 'POINT', 2);
+
+
+ALTER TABLE ONLY poblaciones_osm ADD CONSTRAINT pk_poblaciones_osm PRIMARY KEY (id);
+
+CREATE INDEX idx_poblaciones_osm_geom ON poblaciones_osm USING gist (geom);
+
+
+insert into poblaciones_osm(id, version, user_id, tstamp, changeset_id, geom)
+select id, version, user_id, tstamp, changeset_id, geom from nodes n
+where exists (select 1 from node_tags t where t.node_id = n.id and t.k = 'place' and t.v in ('city','town', 'village', 'hamlet', 'suburb','isolated_dwelling'))
