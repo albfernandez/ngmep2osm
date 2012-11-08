@@ -52,7 +52,7 @@ public class BuscaAsignaIds {
         List<Entity> entidadesIne = new ArrayList<Entity>();
         List<Entity> entidadesActualizadas = new ArrayList<Entity>();
         for (Entidad entidad: entidades) {            
-            List<Node> nodos = NodeDAO.getInstance().getNode(entidad.getLon(), entidad.getLat(), 0.02, "place", PLACES);
+            List<Node> nodos = NodeDAO.getInstance().getPoblaciones(entidad.getLon(), entidad.getLat(), 0.02);
             for (Node nodo : nodos){
                 String nombreOsm = null;
                 if (nodo.containsTag( "name")){

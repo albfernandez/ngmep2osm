@@ -158,6 +158,22 @@ public class NodeDAO extends AbstractEntityDAO {
         return lista;
     }
     
+    public List<Node> getPoblaciones(double lon, double lat, double distance) throws SQLException {
+    	String query = "select id, version, user_id, tstamp, changeset_id, st_x(geom) as lon, st_y(geom) as lat from poblaciones_osm  ";
+    	query += " where 1=1 ";
+    	query += " and st_distance(st_setsrid(st_point(?,?),4326), geom) < ?";
+    	PreparedStatement ps = Database.getConnection().prepareStatement(query);
+    	ps.setDouble(1, lon);
+        ps.setDouble(2, lat);
+        ps.setDouble(3, distance);
+        ResultSet rs = ps.executeQuery();
+        
+        List<Node> lista = getNodes(rs);
+        rs.close();
+        ps.close();
+        
+        return lista;
+    }
     
     
 
