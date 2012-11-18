@@ -34,16 +34,16 @@ public class Main {
      * @throws SQLException 
      */
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
-    	boolean objetivo1 = true;
+    	boolean objetivo2 = true;
     	boolean objetivo3 = true;
     	boolean objetivo4 = true;
     	if (args.length > 0){
-    		objetivo1 = false;
+    		objetivo2 = false;
     		objetivo3 = false;
     		objetivo4 = false;
     		for (String argumento: args){
-    			if ("1".equals(argumento)){
-    				objetivo1 = true;
+    			if ("2".equals(argumento)){
+    				objetivo2 = true;
     			}
     			if ("3".equals(argumento)){
     				objetivo3 = true;
@@ -56,7 +56,7 @@ public class Main {
     	
         StopWatch cronometro = new StopWatch();
         cronometro.start();
-        if (objetivo1) {
+        if (objetivo2) {
         	ngmep.procesos.BuscaAsignaIds.buscaOsmId();
         }
         if (objetivo3) {

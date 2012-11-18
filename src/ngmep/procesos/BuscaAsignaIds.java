@@ -94,14 +94,14 @@ public class BuscaAsignaIds {
         }
         
         Log.log("Exportando entidades pendientes osm:" + entidadesOsm.size());
-        OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmOutputFile("objetivo1.pendientes_osm"))); 
+        OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmOutputFile("objetivo2.pendientes_osm"))); 
         XMLExporter.export(entidadesOsm, salida,true);
         salida.close();
         Log.log("Exportando entidades pendientes ine:" + entidadesIne.size());
-        salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmOutputFile("objetivo1.pendientes_ine"))); 
+        salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmOutputFile("objetivo2.pendientes_ine"))); 
         XMLExporter.export(entidadesIne, salida,true);
         salida.close();
-        salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmOutputFile("objetivo1.subir"))); 
+        salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmOutputFile("objetivo2.subir"))); 
         XMLExporter.export(entidadesActualizadas, salida,true);
         salida.close();
     }
