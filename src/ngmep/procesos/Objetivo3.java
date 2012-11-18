@@ -247,7 +247,7 @@ public class Objetivo3 {
         }
         
         if (nodos.size() > 0){
-            String nombreArchivo = Config.getOsmOutputFile("subir.objetivo3");
+            String nombreArchivo = Config.getOsmOutputFile("objetivo3.subir");
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(nodos, salida, false);
             salida.close();
@@ -257,7 +257,7 @@ public class Objetivo3 {
         	Log.log("No se ha generado el archivo.");
         }
         if (errores.size() > 0) {
-            String nombreArchivo = Config.getOsmOutputFile("errores.objetivo3");
+            String nombreArchivo = Config.getOsmOutputFile("objetivo3.errores");
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(errores, salida, true);
             salida.close();

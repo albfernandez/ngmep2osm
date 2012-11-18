@@ -94,7 +94,7 @@ public class Objetivo4 {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String fecha = sdf.format(new Date());
         if (municipios.size() > 0){
-            String nombreArchivo = Config.getOsmOutputFile("subir.objetivo4");
+            String nombreArchivo = Config.getOsmOutputFile("objetivo4.subir");
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(municipios, salida, false);
             salida.close();
