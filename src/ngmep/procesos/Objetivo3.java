@@ -201,7 +201,7 @@ public class Objetivo3 {
         String query  = EntidadDAO.QUERY_BASE + " where  estado_manual >= 0 and estado_robot = 0";
         Statement stmt = null;
 		ResultSet rs = null;
-		List<Entidad> entidades = new ArrayList<Entidad>();
+		List<Entidad> entidades = null;
 		try {
 
 			stmt = Database.getConnection().createStatement();
@@ -209,7 +209,7 @@ public class Objetivo3 {
 			entidades = EntidadDAO.getInstance().getListFromRs(rs);
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {rs.close();} catch (Exception e) {}
 			}
 			if (stmt != null) {
 				stmt.close();

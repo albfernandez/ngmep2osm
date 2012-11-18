@@ -54,14 +54,14 @@ public class Objetivo4 {
         query = query + "and cod_prov in ('35', '38')";
         Statement stmt = null;
 		ResultSet rs = null;
-		List<Entidad> entidades = new ArrayList<Entidad>();
+		List<Entidad> entidades = null;
 		try {
 			stmt = Database.getConnection().createStatement();
 			rs = stmt.executeQuery(query);
 			entidades = EntidadDAO.getInstance().getListFromRs(rs);
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try { rs.close(); } catch (Exception e) {}
 			}
 			if (stmt != null) {
 				stmt.close();

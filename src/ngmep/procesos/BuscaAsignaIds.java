@@ -50,7 +50,7 @@ public class BuscaAsignaIds {
 
         ResultSet rs = null;
         Statement stmt = null;
-        List<Entidad> entidades = new ArrayList<Entidad>(); 
+        List<Entidad> entidades = null; 
         try {
         	stmt = Database.getConnection().createStatement();
         	rs = stmt.executeQuery(query);
@@ -58,7 +58,7 @@ public class BuscaAsignaIds {
         }
         finally {
         	if (rs != null) {
-        		rs.close();
+        		try {rs.close();} catch (Exception e) {}
         	}
         	if (stmt != null) {
         		stmt.close();
