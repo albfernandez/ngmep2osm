@@ -47,15 +47,24 @@ public class WayDAO extends AbstractEntityDAO{
         super();
     }
     public Way getWay(long id) throws SQLException {
-        PreparedStatement ps = Database.getConnection().prepareStatement(QUERY_WAY);
-        ps.setLong(1, id);
-        ResultSet rs = ps.executeQuery();
-        Way way = null;
-        if (rs.next()){
-            way = getWay(rs);
-        }
-        rs.close();
-        ps.close();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		Way way = null;
+		try {
+			ps = Database.getConnection().prepareStatement(QUERY_WAY);
+			ps.setLong(1, id);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				way = getWay(rs);
+			}
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+		}
      
         return way;
     }
@@ -94,26 +103,30 @@ public class WayDAO extends AbstractEntityDAO{
         return lista;
     }
 
-    private void loadPoints(Way way) throws SQLException{
-        PreparedStatement ps = Database.getConnection().prepareStatement(QUERY_WAY_NODES);
-        ps.setLong(1, way.getId());
-        ResultSet rs = ps.executeQuery();
-        List<Long> idNodos = new ArrayList<Long>();
-        while(rs.next()){
-            idNodos.add(rs.getLong("node_id"));
-        }        
-        rs.close();
-        ps.close();
-        for (long id: idNodos) {
-            way.addNode(NodeDAO.getInstance().getNode(id));
-        }     
-    }
+	private void loadPoints(Way way) throws SQLException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Long> idNodos = new ArrayList<Long>();
+
+		try {
+			ps = Database.getConnection().prepareStatement(QUERY_WAY_NODES);
+			ps.setLong(1, way.getId());
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				idNodos.add(rs.getLong("node_id"));
+			}
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+		}
+		for (long id : idNodos) {
+			way.addNode(NodeDAO.getInstance().getNode(id));
+		}
+	}
 
 }
-
-
-
-
-
-
-

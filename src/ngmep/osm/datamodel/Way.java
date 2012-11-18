@@ -34,5 +34,8 @@ public class Way extends Entity{
     public List<Node> getNodes(){
         return this.nodos;
     }
-
+    @Override
+    public boolean equals(Object obj) {
+    	return super.equals(obj);
+    }
 }

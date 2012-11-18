@@ -11,7 +11,7 @@ import ngmep.config.Config;
 public class Log {
 
 	public static void log(String mensaje) {
-		System.out.println(mensaje);
+		System.out.println(mensaje); //NOPMD
 		logToFile (mensaje);
 	}
 	public static void logToFile (String mensaje) {

@@ -41,12 +41,15 @@ public class Database {
             Properties config = Config.getConfigProperties();
             
             String url = "jdbc:postgresql://" + config.getProperty("host") + "/" + config.getProperty("database");
-            connection = DriverManager.getConnection(url, config);
+            
+            Connection tmpConnection = DriverManager.getConnection(url, config);
+            checkSimpleSchema(tmpConnection);
+            connection = tmpConnection;
             }
             catch (IOException io){
                 throw new SQLException("Error leyendo configuracion", io);
             }
-            checkSimpleSchema(connection);           
+                  
         }
         return connection;
     }

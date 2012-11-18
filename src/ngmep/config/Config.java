@@ -26,6 +26,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import ngmep.osm.log.Log;
+
 public class Config {
     
 	private static String fecha="";
@@ -35,23 +37,35 @@ public class Config {
         String home = System.getProperty("user.home");
         File osm = new File(home + File.separator + "osm");
         if (!osm.exists()){
-        	osm.mkdir();
+        	if (!osm.mkdir()){
+        		Log.log("Error creando el directorio:" + osm.getAbsolutePath());
+        	}
         }
         File ine = new File(osm, "ine");
         if (!ine.exists()){
-        	ine.mkdir();
+        	if (!ine.mkdir()){
+        		Log.log("Error creando el directorio:" + ine.getAbsolutePath());
+        	}
         }
         File log = new File (ine, "log");
         if (!log.exists()){
-        	log.mkdir();
+        	if (!log.mkdir()){
+        		Log.log("Error creando el directorio:" + log.getAbsolutePath());
+        	}
         }
 	}
     public static Properties getConfigProperties () throws IOException{
         Properties config = new Properties();
-        FileInputStream fis = new FileInputStream(
-                 getOsmDir() + "osmc.auth");
-        config.load(fis);
-        fis.close();
+        FileInputStream fis = null;
+        try {
+        	fis = new FileInputStream(getOsmDir() + "osmc.auth");
+        	config.load(fis);
+        }
+        finally {       
+        	if (fis != null) {
+        		fis.close();
+        	}
+        }
         return config;
     }
     public static String getOsmDir () {

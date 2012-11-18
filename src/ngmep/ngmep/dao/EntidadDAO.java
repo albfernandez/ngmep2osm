@@ -49,78 +49,107 @@ public class EntidadDAO {
         
     }
     
-    public Entidad getEntidadFromOsmId(long osmid) throws SQLException{
-            PreparedStatement ps = Database.getConnection().prepareStatement(QUERY_OSMID);
-            ps.setLong(1, osmid);
-            ResultSet rs = ps.executeQuery();
-            Entidad entidad = null;
-            if (rs.next()){
-                entidad = getEntidad(rs);
-            }
-            rs.close();
-            ps.close();
-         
-            return entidad;
-    }
-    public Entidad getEntidadFromCodIne(String codIne) throws SQLException{
-        PreparedStatement ps = Database.getConnection().prepareStatement(QUERY_INE);
-        ps.setString(1, codIne);
-        ResultSet rs = ps.executeQuery();
-        Entidad entidad = null;
-        if (rs.next()){
-            entidad = getEntidad(rs);
-        }
-        rs.close();
-        ps.close();
-     
-        return entidad;
-    }
-    private Entidad getEntidad(ResultSet rs) throws SQLException {
-        Entidad entidad = new Entidad();
-        entidad.setCodine(rs.getString("cod_ine"));
-        entidad.setCodineMun(rs.getString("cod_ine_mun"));
-        entidad.setNombreMun(rs.getString("nombre_mun"));
-        entidad.setName(rs.getString("name"));
-        entidad.setAltura(rs.getDouble("altura"));
-        entidad.setSourceAltura(rs.getString("origen_alturas"));
-        entidad.setLat(rs.getDouble("lat"));
-        entidad.setLon(rs.getDouble("lon"));
-        entidad.setOsmid(rs.getLong("osmid"));
-        entidad.setPlace(rs.getString("place"));
-        entidad.setPoblacion(rs.getDouble("poblacion"));
-        entidad.setAdministrativeLevel(rs.getInt("admin_level"));
-        entidad.setPoblacionMuni(rs.getDouble("poblacion_muni"));
-        entidad.setNombreOficial(rs.getString("official_name"));
-        entidad.setNombreAlternativo(rs.getString("alt_name"));
-        entidad.setNombreAntiguo(rs.getString("old_name"));
-        entidad.setName1(rs.getString("name1"));
-        entidad.setName2(rs.getString("name2"));
-        entidad.setLan1(rs.getString("lan1"));
-        entidad.setLan2(rs.getString("lan2"));
-        entidad.setFechaCambioNombre(rs.getString("fecha_cambio_nom"));
-        entidad.setDecreto(rs.getString("decreto_boletin_oficial"));
-        entidad.setLocName(rs.getString("loc_name"));
-        entidad.setEstadoManual(rs.getInt("estado_manual"));
-        entidad.setEstadoRobot(rs.getInt("estado_robot"));
-        entidad.setCodigoProvincia(rs.getString("cod_prov"));
-        entidad.setDecisionNombre(rs.getString("decision_nombre"));
-        
-        
-        return entidad;
-    }
-    public List<Entidad> getListFromRs(ResultSet rs) throws SQLException {
-        List<Entidad> lista = new ArrayList<Entidad>();
-        while (rs.next()){
-            lista.add(getEntidad(rs));
-        }
-        return lista;
-    }
+	public Entidad getEntidadFromOsmId(long osmid) throws SQLException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		Entidad entidad = null;
+		try {
+			ps = Database.getConnection().prepareStatement(QUERY_OSMID);
+			ps.setLong(1, osmid);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				entidad = getEntidad(rs);
+			}
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+		}
+
+		return entidad;
+	}
+
+	public Entidad getEntidadFromCodIne(String codIne) throws SQLException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		Entidad entidad = null;
+		try {
+			ps = Database.getConnection().prepareStatement(QUERY_INE);
+			ps.setString(1, codIne);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				entidad = getEntidad(rs);
+			}
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+		}
+
+		return entidad;
+	}
+
+	private Entidad getEntidad(ResultSet rs) throws SQLException {
+		Entidad entidad = new Entidad();
+		entidad.setCodine(rs.getString("cod_ine"));
+		entidad.setCodineMun(rs.getString("cod_ine_mun"));
+		entidad.setNombreMun(rs.getString("nombre_mun"));
+		entidad.setName(rs.getString("name"));
+		entidad.setAltura(rs.getDouble("altura"));
+		entidad.setSourceAltura(rs.getString("origen_alturas"));
+		entidad.setLat(rs.getDouble("lat"));
+		entidad.setLon(rs.getDouble("lon"));
+		entidad.setOsmid(rs.getLong("osmid"));
+		entidad.setPlace(rs.getString("place"));
+		entidad.setPoblacion(rs.getDouble("poblacion"));
+		entidad.setAdministrativeLevel(rs.getInt("admin_level"));
+		entidad.setPoblacionMuni(rs.getDouble("poblacion_muni"));
+		entidad.setNombreOficial(rs.getString("official_name"));
+		entidad.setNombreAlternativo(rs.getString("alt_name"));
+		entidad.setNombreAntiguo(rs.getString("old_name"));
+		entidad.setName1(rs.getString("name1"));
+		entidad.setName2(rs.getString("name2"));
+		entidad.setLan1(rs.getString("lan1"));
+		entidad.setLan2(rs.getString("lan2"));
+		entidad.setFechaCambioNombre(rs.getString("fecha_cambio_nom"));
+		entidad.setDecreto(rs.getString("decreto_boletin_oficial"));
+		entidad.setLocName(rs.getString("loc_name"));
+		entidad.setEstadoManual(rs.getInt("estado_manual"));
+		entidad.setEstadoRobot(rs.getInt("estado_robot"));
+		entidad.setCodigoProvincia(rs.getString("cod_prov"));
+		entidad.setDecisionNombre(rs.getString("decision_nombre"));
+
+		return entidad;
+	}
+
+	public List<Entidad> getListFromRs(ResultSet rs) throws SQLException {
+		List<Entidad> lista = new ArrayList<Entidad>();
+		while (rs.next()) {
+			lista.add(getEntidad(rs));
+		}
+		return lista;
+	}
     public void updateOsmId(Entidad entidad) throws SQLException {
-        PreparedStatement ps = Database.getConnection().prepareStatement("update ngmep set osmid=? where cod_ine = ?");
-        ps.setLong(1,entidad.getOsmid());
-        ps.setString(2, entidad.getCodine());
-        ps.executeUpdate();
-        ps.close();        
+		PreparedStatement ps = null;
+		try {
+			ps = Database.getConnection().prepareStatement(
+					"update ngmep set osmid=? where cod_ine = ?");
+			ps.setLong(1, entidad.getOsmid());
+			ps.setString(2, entidad.getCodine());
+			ps.executeUpdate();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+		}
     }
 
 }

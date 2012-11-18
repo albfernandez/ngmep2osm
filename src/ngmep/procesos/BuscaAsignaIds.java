@@ -19,12 +19,12 @@ package ngmep.procesos;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
@@ -48,8 +48,22 @@ public class BuscaAsignaIds {
     public static void buscaOsmId () throws SQLException, ClassNotFoundException, IOException{
         String query  = EntidadDAO.QUERY_BASE + " where osmid is  null and estado_robot = 0 and estado_manual = 0  " ;
 
-        ResultSet rs = Database.getConnection().createStatement().executeQuery(query);
-        List<Entidad> entidades = EntidadDAO.getInstance().getListFromRs(rs);
+        ResultSet rs = null;
+        Statement stmt = null;
+        List<Entidad> entidades = new ArrayList<Entidad>(); 
+        try {
+        	stmt = Database.getConnection().createStatement();
+        	rs = stmt.executeQuery(query);
+        	entidades = EntidadDAO.getInstance().getListFromRs(rs);
+        }
+        finally {
+        	if (rs != null) {
+        		rs.close();
+        	}
+        	if (stmt != null) {
+        		stmt.close();
+        	}
+        }
         List<Entity> entidadesOsm = new ArrayList<Entity>();
         List<Entity> entidadesIne = new ArrayList<Entity>();
         List<Entity> entidadesActualizadas = new ArrayList<Entity>();

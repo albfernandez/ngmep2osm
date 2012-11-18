@@ -41,6 +41,9 @@ public class Node extends Entity{
         setModified(true);
     }
     
-    
+    @Override
+    public boolean equals(Object obj) {
+    	return super.equals(obj);
+    }
 
 }

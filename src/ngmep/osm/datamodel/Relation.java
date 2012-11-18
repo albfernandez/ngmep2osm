@@ -47,5 +47,9 @@ public class Relation extends Entity{
         }
         return false;
     }
+    @Override
+    public boolean equals(Object obj) {
+    	return super.equals(obj);
+    }
 }
 

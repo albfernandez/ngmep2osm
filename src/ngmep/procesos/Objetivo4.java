@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,9 +56,22 @@ public class Objetivo4 {
     public static void ejecutaObjetivo4 () throws SQLException, ClassNotFoundException, IOException{
         String query  =  EntidadDAO.QUERY_BASE + " where osmid is not  null and admin_level in (4,6,7,8) and estado_4 = 0 ";
         query = query + "and cod_prov in ('35', '38')";
-        ResultSet rs = Database.getConnection().createStatement().executeQuery(query);
-        List<Entidad> entidades = EntidadDAO.getInstance().getListFromRs(rs);
-        rs.close();
+        Statement stmt = null;
+		ResultSet rs = null;
+		List<Entidad> entidades = new ArrayList<Entidad>();
+		try {
+			stmt = Database.getConnection().createStatement();
+			rs = stmt.executeQuery(query);
+			entidades = EntidadDAO.getInstance().getListFromRs(rs);
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				stmt.close();
+			}
+
+		}
         List<Entity> municipios = new ArrayList<Entity>();
         for (Entidad ine: entidades) {
             String ineCapital = ine.getCodine();
@@ -91,8 +105,6 @@ public class Objetivo4 {
             	Log.log( " se encontraron " + relaciones.size() + " limites para el municipio " + ineRelacion + "/" + ineCapital);
             }            
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String fecha = sdf.format(new Date());
         if (municipios.size() > 0){
             String nombreArchivo = Config.getOsmOutputFile("objetivo4.subir");
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
@@ -125,11 +137,18 @@ public class Objetivo4 {
         }
         return osm;
     }
-    private static void marcarProcesado(Entidad ine) throws SQLException {
-        String query = "update ngmep set estado_4 = 1 where cod_ine = ?";
-        PreparedStatement ps = Database.getConnection().prepareStatement(query);
-        ps.setString(1, ine.getCodine());
-        ps.executeUpdate();  
-        ps.close();
-    }
+
+	private static void marcarProcesado(Entidad ine) throws SQLException {
+		String query = "update ngmep set estado_4 = 1 where cod_ine = ?";
+		PreparedStatement ps = null;
+		try {
+			ps = Database.getConnection().prepareStatement(query);
+			ps.setString(1, ine.getCodine());
+			ps.executeUpdate();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+		}
+	}
 }

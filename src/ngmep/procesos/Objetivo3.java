@@ -19,18 +19,15 @@ package ngmep.procesos;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.zip.GZIPOutputStream;
 
 import ngmep.config.Config;
@@ -51,10 +48,10 @@ public class Objetivo3 {
     
 	public static final String INSTITUTO_GEGORAFICO = "Instituto Geográfico Nacional";
 	
-	private static final Locale LOCALE_ES = new Locale("ES", "es");
+
     private static int iderror = 0;
     private static String doubleToString(double d){
-        return Long.toString(new Double(d).longValue());
+        return Long.toString((long) d);
     }
     
     
@@ -188,8 +185,8 @@ public class Objetivo3 {
         estableceNombresAlternativos(osm, ine);
         
         // Establecemos el nombre "name"
-        String osmName = osm.getTag("name");
-        String ineName = ine.getName();
+        //String osmName = osm.getTag("name");
+        //String ineName = ine.getName();
         if (ajustarNombre(osm, ine)){
             return "";
         }
@@ -202,9 +199,22 @@ public class Objetivo3 {
     
     public static void ejecutaObjetivo3 () throws SQLException, ClassNotFoundException, IOException{
         String query  = EntidadDAO.QUERY_BASE + " where  estado_manual >= 0 and estado_robot = 0";
-        ResultSet rs = Database.getConnection().createStatement().executeQuery(query);
-        List<Entidad> entidades = EntidadDAO.getInstance().getListFromRs(rs);
-        rs.close();
+        Statement stmt = null;
+		ResultSet rs = null;
+		List<Entidad> entidades = new ArrayList<Entidad>();
+		try {
+
+			stmt = Database.getConnection().createStatement();
+			rs = stmt.executeQuery(query);
+			entidades = EntidadDAO.getInstance().getListFromRs(rs);
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
         List<Entity> nodos = new ArrayList<Entity>();
         List<Entity> errores = new ArrayList<Entity>();
         String error = "";
@@ -274,6 +284,9 @@ public class Objetivo3 {
             else if (osm instanceof Way){
                 nodo = ((Way) osm).getNodes().get(0);
             }
+            else {
+            	throw new IllegalArgumentException("osm must be a way or a node");
+            }
             double difLatitud = Math.abs(ine.getLat() - nodo.getLat());
             double difLongitud = Math.abs(ine.getLon() - nodo.getLon());
             
@@ -299,13 +312,19 @@ public class Objetivo3 {
         return osm.containsTag("place") && osm.containsTag("name"); 
     }
 
-    private static void marcarProcesado(Entidad ine) throws SQLException {
-        String query = "update ngmep set estado_robot = 1 where cod_ine = ?";
-        PreparedStatement ps = Database.getConnection().prepareStatement(query);
-        ps.setString(1, ine.getCodine());
-        ps.executeUpdate(); 
-        ps.close();
-    }
+	private static void marcarProcesado(Entidad ine) throws SQLException {
+		String query = "update ngmep set estado_robot = 1 where cod_ine = ?";
+		PreparedStatement ps = null;
+		try {
+			ps = Database.getConnection().prepareStatement(query);
+			ps.setString(1, ine.getCodine());
+			ps.executeUpdate();
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+		}
+	}
 
     private static void estableceNombresAlternativos (Entity osm, Entidad ine){
         if (!StringUtils.isBlank(ine.getLan1()) && !StringUtils.isBlank(ine.getName1())) {
