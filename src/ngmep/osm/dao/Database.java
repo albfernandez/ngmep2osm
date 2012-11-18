@@ -21,7 +21,9 @@ package ngmep.osm.dao;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -31,6 +33,8 @@ public class Database {
 
     
     private static Connection connection;
+    private static boolean simpleSchema = false;
+    
     public static Connection getConnection () throws   SQLException {
         if (connection == null){
             try {
@@ -42,6 +46,7 @@ public class Database {
             catch (IOException io){
                 throw new SQLException("Error leyendo configuracion", io);
             }
+            checkSimpleSchema(connection);           
         }
         return connection;
     }
@@ -49,6 +54,21 @@ public class Database {
         if (connection != null) {
             connection.close();
         }
+    }
+    
+    private static void checkSimpleSchema(Connection connection) {
+    	DatabaseMetaData md;
+		try {
+			md = connection.getMetaData();
+			ResultSet rs = md.getTables(null, null, "node_tags", null);
+	        simpleSchema = rs.next();
+	        rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}        
+    }
+    public static boolean isSimpleSchema () {
+    	return simpleSchema;
     }
     
     

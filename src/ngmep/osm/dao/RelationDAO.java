@@ -68,7 +68,7 @@ public class RelationDAO extends AbstractEntityDAO{
         
         
         String query = QUERY_BASE;
-        if (System.getProperty("simple_schema") != null){
+        if (Database.isSimpleSchema()){
             query += " where exists (select 1 from relation_tags t where t.relation_id = r.id and t.k = ?";
             if (!StringUtils.isBlank(value)) {
                 query += " and t.v = ?";
@@ -150,7 +150,7 @@ public class RelationDAO extends AbstractEntityDAO{
         ps.close();
     }
     private String get_QUERY_RELATION_TAGS() {
-        if (System.getProperty("simple_schema") != null){
+        if (Database.isSimpleSchema()){
             return QUERY_RELATION_TAGS_A;
         }
         return QUERY_RELATION_TAGS;

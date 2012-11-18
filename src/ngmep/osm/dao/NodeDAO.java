@@ -178,7 +178,7 @@ public class NodeDAO extends AbstractEntityDAO {
     
 
     private String get_QUERY_NODE_TAGS() {
-        if (System.getProperty("simple_schema") != null){
+        if (Database.isSimpleSchema()){
             return QUERY_NODE_TAGS_A;
         }
         return QUERY_NODE_TAGS;

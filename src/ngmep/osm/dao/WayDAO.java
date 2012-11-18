@@ -80,7 +80,7 @@ public class WayDAO extends AbstractEntityDAO{
         return way;
     } 
     private String get_QUERY_WAY_TAGS() {
-        if (System.getProperty("simple_schema") != null){
+        if (Database.isSimpleSchema()){
             return QUERY_WAY_TAGS_A;
         }
         return QUERY_WAY_TAGS;
