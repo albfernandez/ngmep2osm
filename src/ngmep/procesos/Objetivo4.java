@@ -43,6 +43,7 @@ import ngmep.osm.datamodel.Entity;
 import ngmep.osm.datamodel.Node;
 import ngmep.osm.datamodel.Relation;
 import ngmep.osm.datamodel.RelationMember;
+import ngmep.osm.log.Log;
 import ngmep.xml.XMLExporter;
 
 public class Objetivo4 {
@@ -86,7 +87,7 @@ public class Objetivo4 {
                 }
             }
             else {
-                System.out.println ( " se encontraron " + relaciones.size() + " limites para el municipio " + ineRelacion + "/" + ineCapital);
+            	Log.log( " se encontraron " + relaciones.size() + " limites para el municipio " + ineRelacion + "/" + ineCapital);
             }            
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -96,10 +97,10 @@ public class Objetivo4 {
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(municipios, salida, false);
             salida.close();
-            System.out.println("Generado el archivo objetivo4 (" + municipios.size() + "):"+nombreArchivo);
+            Log.log("Generado el archivo objetivo4 (" + municipios.size() + "):"+nombreArchivo);
         }
         else {
-            System.out.println("No se ha generado el archivo de objetivo4.");
+        	Log.log("No se ha generado el archivo de objetivo4.");
         }
         
     }
@@ -117,7 +118,7 @@ public class Objetivo4 {
         Node osm = null;
         if (!localidades.isEmpty()) {
                 if (localidades.size() > 1) {
-                        System.out.println("Nodo duplicado: " + codine);
+                	Log.log("Nodo duplicado: " + codine);
                 }
                 osm = localidades.get(0);
         }

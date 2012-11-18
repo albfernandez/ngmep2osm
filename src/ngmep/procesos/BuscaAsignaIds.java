@@ -35,6 +35,7 @@ import ngmep.osm.dao.Database;
 import ngmep.osm.dao.NodeDAO;
 import ngmep.osm.datamodel.Entity;
 import ngmep.osm.datamodel.Node;
+import ngmep.osm.log.Log;
 import ngmep.xml.XMLExporter;
 
 public class BuscaAsignaIds {
@@ -61,8 +62,8 @@ public class BuscaAsignaIds {
                 else if (nodo.containsTag("name:es")){
                     nombreOsm = nodo.getTag("name:es");
                 }
-                System.out.println("INE:" + entidad.getCodine() + ":" + entidad.getName());
-                System.out.println("OSM:" + nodo.getId() + ":" + nombreOsm);
+                Log.log("INE:" + entidad.getCodine() + ":" + entidad.getName());
+                Log.log("OSM:" + nodo.getId() + ":" + nombreOsm);
                 
                 if (entidad.getCodine().equals(nodo.getTag("ref:ine"))){
                 	actualizarIguales(entidad, nodo);
@@ -91,11 +92,11 @@ public class BuscaAsignaIds {
             }            
         }
         
-        System.out.println("Exportando entidades pendientes osm:" + entidadesOsm.size());
+        Log.log("Exportando entidades pendientes osm:" + entidadesOsm.size());
         OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmDir() + "pendientes_osm.osm.gz")); 
         XMLExporter.export(entidadesOsm, salida,true);
         salida.close();
-        System.out.println("Exportando entidades pendientes ine:" + entidadesIne.size());
+        Log.log("Exportando entidades pendientes ine:" + entidadesIne.size());
         salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmDir() + "pendientes_ine.osm.gz")); 
         XMLExporter.export(entidadesIne, salida,true);
         salida.close();
@@ -105,7 +106,7 @@ public class BuscaAsignaIds {
     }
     
     private static void actualizarIguales(Entidad entidad, Node nodo) throws SQLException{
-        System.out.println("Actualizando:" + entidad.getCodine() + ":" + nodo.getId()); 
+    	Log.log("Actualizando:" + entidad.getCodine() + ":" + nodo.getId()); 
         entidad.setOsmid(nodo.getId());
         EntidadDAO.getInstance().updateOsmId(entidad);
     }

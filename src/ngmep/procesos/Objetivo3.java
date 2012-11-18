@@ -41,6 +41,7 @@ import ngmep.osm.dao.WayDAO;
 import ngmep.osm.datamodel.Entity;
 import ngmep.osm.datamodel.Node;
 import ngmep.osm.datamodel.Way;
+import ngmep.osm.log.Log;
 import ngmep.xml.XMLExporter;
 
 import org.apache.commons.lang3.StringUtils;
@@ -108,12 +109,12 @@ public class Objetivo3 {
          */
         if (osm.containsTag("ref:ine")){                
             if (!ine.getCodine().equals(osm.getTag("ref:ine"))){
-                System.out.println("El elemento ya tiene REF_INE y NO COINCIDE:" + ine.getCodine() + "|" + osm.getTag("ref:ine"));
+            	Log.log("El elemento ya tiene REF_INE y NO COINCIDE:" + ine.getCodine() + "|" + osm.getTag("ref:ine"));
                 return "El elemento ya tiene REF_INE y NO COINCIDE";
             }
             /*
             if (osm.getUser() != null && "egrn".equals(osm.getUser().getName())){
-                //System.out.println("localidad ya actualizada por egrn:" + osm.getId());
+                //Log.log("localidad ya actualizada por egrn:" + osm.getId());
                 return false;
             }*/
             
@@ -191,8 +192,8 @@ public class Objetivo3 {
         if (ajustarNombre(osm, ine)){
             return "";
         }
-        System.out.println("INE:" + ine.getCodine() + " No se que hacer con la decision [" + ine.getDecisionNombre() +"]");
-        System.out.println("osm:" + osm.getTag("name") + " ine:" + ine.getName());
+        Log.log("INE:" + ine.getCodine() + " No se que hacer con la decision [" + ine.getDecisionNombre() +"]");
+        Log.log("osm:" + osm.getTag("name") + " ine:" + ine.getName());
         return "No se que hacer con la decision [" + ine.getDecisionNombre() +"]";
         
     }
@@ -237,7 +238,7 @@ public class Objetivo3 {
                 }
             }
             if (!StringUtils.isBlank(error)) {
-                System.out.println(error);
+            	Log.log(error);
                 errores.add(entidad2node(ine, error));
             }
 
@@ -250,17 +251,17 @@ public class Objetivo3 {
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(nodos, salida, false);
             salida.close();
-            System.out.println("Generado el archivo (" + nodos.size() + "):"+nombreArchivo);
+            Log.log("Generado el archivo (" + nodos.size() + "):"+nombreArchivo);
         }
         else {
-            System.out.println("No se ha generado el archivo.");
+        	Log.log("No se ha generado el archivo.");
         }
         if (errores.size() > 0) {
             String nombreArchivo = Config.getOsmDir() + "/ine/errores.objetivo3." +fecha+  ".osm.gz";
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(errores, salida, true);
             salida.close();
-            System.out.println("Generado el archivo(" + errores.size() + "):"+nombreArchivo);
+            Log.log("Generado el archivo(" + errores.size() + "):"+nombreArchivo);
         }
         
     }
@@ -339,7 +340,7 @@ public class Objetivo3 {
     private static boolean ajustarNombre(Entity osm, Entidad ine) {
         String nombre = osm.getTag("name");        
         if (StringUtils.isBlank(nombre)) {
-            System.out.println("osm sin nombre " + osm.getId());
+        	Log.log("osm sin nombre " + osm.getId());
             return false;
         }
         

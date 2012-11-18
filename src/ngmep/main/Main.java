@@ -21,6 +21,8 @@ package ngmep.main;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import ngmep.osm.log.Log;
+
 import org.apache.commons.lang3.time.StopWatch;
 
 public class Main {
@@ -40,7 +42,7 @@ public class Main {
         ngmep.procesos.Objetivo4.ejecutaObjetivo4();
         
         cronometro.stop();
-        System.out.println("Tiempo empleado:" + cronometro);
+        Log.log("Tiempo empleado:" + cronometro);
 
     }
 }
