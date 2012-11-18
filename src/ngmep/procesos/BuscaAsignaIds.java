@@ -40,7 +40,7 @@ import ngmep.osm.log.Log;
 import ngmep.xml.XMLExporter;
 
 public class BuscaAsignaIds {
-    private static final String[] PLACES = new String[] { "city","town", "village", "hamlet", "suburb","isolated_dwelling"};
+//    private static final String[] PLACES = new String[] { "city","town", "village", "hamlet", "suburb","isolated_dwelling"};
 
 
     private static int contador = -1;

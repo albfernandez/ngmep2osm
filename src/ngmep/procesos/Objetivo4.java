@@ -19,17 +19,13 @@ package ngmep.procesos;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
@@ -138,17 +134,17 @@ public class Objetivo4 {
         return osm;
     }
 
-	private static void marcarProcesado(Entidad ine) throws SQLException {
-		String query = "update ngmep set estado_4 = 1 where cod_ine = ?";
-		PreparedStatement ps = null;
-		try {
-			ps = Database.getConnection().prepareStatement(query);
-			ps.setString(1, ine.getCodine());
-			ps.executeUpdate();
-		} finally {
-			if (ps != null) {
-				ps.close();
-			}
-		}
-	}
+//	private static void marcarProcesado(Entidad ine) throws SQLException {
+//		String query = "update ngmep set estado_4 = 1 where cod_ine = ?";
+//		PreparedStatement ps = null;
+//		try {
+//			ps = Database.getConnection().prepareStatement(query);
+//			ps.setString(1, ine.getCodine());
+//			ps.executeUpdate();
+//		} finally {
+//			if (ps != null) {
+//				ps.close();
+//			}
+//		}
+//	}
 }
