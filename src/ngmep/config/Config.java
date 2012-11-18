@@ -22,10 +22,30 @@ package ngmep.config;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 public class Config {
     
+	private static String fecha="";
+	static {
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        fecha = sdf.format(new Date());
+        String home = System.getProperty("user.home");
+        File osm = new File(home + File.separator + "osm");
+        if (!osm.exists()){
+        	osm.mkdir();
+        }
+        File ine = new File(osm, "ine");
+        if (!ine.exists()){
+        	ine.mkdir();
+        }
+        File log = new File (ine, "log");
+        if (!log.exists()){
+        	log.mkdir();
+        }
+	}
     public static Properties getConfigProperties () throws IOException{
         Properties config = new Properties();
         FileInputStream fis = new FileInputStream(
@@ -36,6 +56,9 @@ public class Config {
     }
     public static String getOsmDir () {
         return System.getProperty("user.home")+ File.separator + "osm" + File.separator;
+    }
+    public static String getOsmOutputFile (String baseName) {
+    	return getOsmDir() + "ine" + File.separator + baseName + "."+ fecha + ".osm.gz";
     }
 
 }

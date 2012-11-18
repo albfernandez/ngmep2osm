@@ -19,6 +19,7 @@ package ngmep.procesos;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,8 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
-
-import org.apache.commons.lang3.StringUtils;
 
 import ngmep.config.Config;
 import ngmep.ngmep.dao.EntidadDAO;
@@ -45,6 +44,8 @@ import ngmep.osm.datamodel.Relation;
 import ngmep.osm.datamodel.RelationMember;
 import ngmep.osm.log.Log;
 import ngmep.xml.XMLExporter;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class Objetivo4 {
 
@@ -93,7 +94,7 @@ public class Objetivo4 {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String fecha = sdf.format(new Date());
         if (municipios.size() > 0){
-            String nombreArchivo = Config.getOsmDir() + "/ine/subir.objetivo4." +fecha+  ".osm.gz";
+            String nombreArchivo = Config.getOsmOutputFile("subir.objetivo4");
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(municipios, salida, false);
             salida.close();

@@ -19,6 +19,7 @@ package ngmep.procesos;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -244,10 +245,9 @@ public class Objetivo3 {
 
         
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String fecha = sdf.format(new Date());
+        
         if (nodos.size() > 0){
-            String nombreArchivo = Config.getOsmDir() + "/ine/subir.objetivo3." +fecha+  ".osm.gz";
+            String nombreArchivo = Config.getOsmOutputFile("subir.objetivo3");
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(nodos, salida, false);
             salida.close();
@@ -257,7 +257,7 @@ public class Objetivo3 {
         	Log.log("No se ha generado el archivo.");
         }
         if (errores.size() > 0) {
-            String nombreArchivo = Config.getOsmDir() + "/ine/errores.objetivo3." +fecha+  ".osm.gz";
+            String nombreArchivo = Config.getOsmOutputFile("errores.objetivo3");
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(errores, salida, true);
             salida.close();

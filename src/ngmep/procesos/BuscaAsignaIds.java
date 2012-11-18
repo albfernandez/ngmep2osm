@@ -19,6 +19,7 @@ package ngmep.procesos;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -93,14 +94,14 @@ public class BuscaAsignaIds {
         }
         
         Log.log("Exportando entidades pendientes osm:" + entidadesOsm.size());
-        OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmDir() + "pendientes_osm.osm.gz")); 
+        OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmOutputFile("objetivo1.pendientes_osm"))); 
         XMLExporter.export(entidadesOsm, salida,true);
         salida.close();
         Log.log("Exportando entidades pendientes ine:" + entidadesIne.size());
-        salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmDir() + "pendientes_ine.osm.gz")); 
+        salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmOutputFile("objetivo1.pendientes_ine"))); 
         XMLExporter.export(entidadesIne, salida,true);
         salida.close();
-        salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmDir() + "ine.subir.osm.gz")); 
+        salida = new GZIPOutputStream(new FileOutputStream(Config.getOsmOutputFile("objetivo1.subir"))); 
         XMLExporter.export(entidadesActualizadas, salida,true);
         salida.close();
     }

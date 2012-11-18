@@ -16,7 +16,7 @@ public class Log {
 	}
 	public static void logToFile (String mensaje) {
 		try {
-			writeToFile(mensaje, Config.getOsmDir() + "log"+File.separator + "log.log");
+			writeToFile(mensaje, Config.getOsmDir() +"ine" + File.separator + "log"+File.separator + "log.log");
 		}
 		catch (IOException ioe) {
 			// Ignorar
