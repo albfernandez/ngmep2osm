@@ -29,7 +29,7 @@ import java.util.List;
 
 import ngmep.osm.datamodel.Way;
 
-public class WayDAO extends AbstractEntityDAO{
+public final class WayDAO extends AbstractEntityDAO{
     public static final String QUERY_WAY = 
         "select id, version, user_id, tstamp, changeset_id from ways where id=?";
     public static final String QUERY_WAY_TAGS_A =
@@ -46,29 +46,29 @@ public class WayDAO extends AbstractEntityDAO{
     private WayDAO(){
         super();
     }
-    public Way getWay(long id) throws SQLException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+    public Way getWay(final long wayId) throws SQLException {
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		Way way = null;
 		try {
-			ps = Database.getConnection().prepareStatement(QUERY_WAY);
-			ps.setLong(1, id);
-			rs = ps.executeQuery();
-			if (rs.next()) {
-				way = getWay(rs);
+			statement = Database.getConnection().prepareStatement(QUERY_WAY);
+			statement.setLong(1, wayId);
+			resultSet = statement.executeQuery();
+			if (resultSet.next()) {
+				way = getWay(resultSet);
 			}
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps != null) {
+			if (statement != null) {
 				try {
-					ps.close();
+					statement.close();
 				}
 				catch (Exception e) {
 					// Ignore
@@ -78,36 +78,36 @@ public class WayDAO extends AbstractEntityDAO{
      
         return way;
     }
-    private Way getWay(ResultSet rs) throws SQLException {
-        long id = rs.getLong("id");
-        Way way = new Way();
-        way.setId(id);
-        way.setUser(UserDAO.getInstance().getUser(rs.getInt("user_id")));
-        way.setVersion(rs.getInt("version"));
-        Calendar calendario = new GregorianCalendar();
-        way.setTimestamp(rs.getTimestamp("tstamp", calendario).getTime());
-        way.setChangeset(rs.getLong("changeset_id"));
+    private Way getWay(final ResultSet resultSetWay) throws SQLException {
+        final long wayId = resultSetWay.getLong("id");
+        final Way way = new Way();
+        way.setId(wayId);
+        way.setUser(UserDAO.getInstance().getUser(resultSetWay.getInt("user_id")));
+        way.setVersion(resultSetWay.getInt("version"));
+        final Calendar calendario = new GregorianCalendar();
+        way.setTimestamp(resultSetWay.getTimestamp("tstamp", calendario).getTime());
+        way.setChangeset(resultSetWay.getLong("changeset_id"));
 
-        PreparedStatement ps2 = null;
-        ResultSet rs2 = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
         try {
-	        ps2 = Database.getConnection().prepareStatement(getQueryWayTags());
-	        ps2.setLong(1,id);
-	        rs2 = ps2.executeQuery();
-	        initTags(way, rs2);
+	        statement = Database.getConnection().prepareStatement(getQueryWayTags());
+	        statement.setLong(1,wayId);
+	        resultSet = statement.executeQuery();
+	        initTags(way, resultSet);
         }
         finally {
-        	if (rs2 != null) {
+        	if (resultSet != null) {
         		try {
-        			rs2.close();
+        			resultSet.close();
         		}
         		catch (Exception e) {
         			// Ignore
         		}
         	}
-        	if (ps2 != null) {
+        	if (statement != null) {
         		try {
-        			ps2.close();
+        			statement.close();
         		}
         		catch (Exception e) {
         			// Ignore
@@ -125,39 +125,39 @@ public class WayDAO extends AbstractEntityDAO{
         return QUERY_WAY_TAGS;
 
     }
-    public List<Way> getWays(ResultSet rs) throws SQLException {
-        List<Way> lista = new ArrayList<Way>();
-        while (rs.next()) {
-            lista.add(getWay(rs));
+    public List<Way> getWays(final ResultSet resultSet) throws SQLException {
+        final List<Way> lista = new ArrayList<Way>();
+        while (resultSet.next()) {
+            lista.add(getWay(resultSet));
         }
         return lista;
     }
 
-	private void loadPoints(Way way) throws SQLException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		List<Long> idNodos = new ArrayList<Long>();
+	private void loadPoints(final Way way) throws SQLException {
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		final List<Long> idNodos = new ArrayList<Long>();
 
 		try {
-			ps = Database.getConnection().prepareStatement(QUERY_WAY_NODES);
-			ps.setLong(1, way.getId());
-			rs = ps.executeQuery();
+			statement = Database.getConnection().prepareStatement(QUERY_WAY_NODES);
+			statement.setLong(1, way.getId());
+			resultSet = statement.executeQuery();
 
-			while (rs.next()) {
-				idNodos.add(rs.getLong("node_id"));
+			while (resultSet.next()) {
+				idNodos.add(resultSet.getLong("node_id"));
 			}
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps != null) {
+			if (statement != null) {
 				try {
-					ps.close();
+					statement.close();
 				}
 				catch (Exception e) {
 					// Ignore

@@ -7,7 +7,7 @@ import java.util.Date;
 
 import ngmep.config.Config;
 
-public class Log {
+public final class Log {
 
 	public static void log(String mensaje) {
 		if (Config.getInstance().isLogConsola() && System.out != null){

@@ -32,13 +32,13 @@ public class RelationMember {
         }
         return "";
     }
-    public void setRole(String role) {
+    public void setRole(final String role) {
         this.role = role;
     }
     public Entity getEntity() {
         return entity;
     }
-    public void setEntity(Entity entity) {
+    public void setEntity(final Entity entity) {
         this.entity = entity;
     }
     

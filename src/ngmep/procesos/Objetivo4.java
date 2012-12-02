@@ -44,7 +44,7 @@ import ngmep.xml.XMLExporter;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class Objetivo4 {
+public final class Objetivo4 {
 
     public static final String ROLE_ADMIN_CENTRE = "admin_centre";
     
@@ -57,34 +57,34 @@ public class Objetivo4 {
     public static void ejecutaObjetivo4 () throws SQLException, ClassNotFoundException, IOException{
         String query  =  EntidadDAO.QUERY_BASE + " where osmid is not  null and admin_level in (4,6,7,8) and estado_4 = 0 ";
         query = query + "and cod_prov in ('35', '38')";
-        Statement stmt = null;
-		ResultSet rs = null;
+        Statement statement = null;
+		ResultSet resultSet = null;
 		List<Entidad> entidades = null;
 		try {
-			stmt = Database.getConnection().createStatement();
-			rs = stmt.executeQuery(query);
-			entidades = EntidadDAO.getInstance().getListFromRs(rs);
+			statement = Database.getConnection().createStatement();
+			resultSet = statement.executeQuery(query);
+			entidades = EntidadDAO.getInstance().getListFromRs(resultSet);
 		} finally {
-			if (rs != null) {
-				try { rs.close(); } catch (Exception e) {}
+			if (resultSet != null) {
+				try { resultSet.close(); } catch (Exception e) {}
 			}
-			if (stmt != null) {
-				stmt.close();
+			if (statement != null) {
+				statement.close();
 			}
 
 		}
-        List<Entity> municipios = new ArrayList<Entity>();
+        final List<Entity> municipios = new ArrayList<Entity>();
         for (Entidad ine: entidades) {
-            String ineCapital = ine.getCodine();
-            String ineMunicipio = ine.getCodineMun();
-            String ineRelacion = ineMunicipio.substring(0, 5);
-            List<Relation> relaciones = RelationDAO.getInstance().getRelationsByTag("ine:municipio", ineRelacion);
+            final String ineCapital = ine.getCodine();
+            final String ineMunicipio = ine.getCodineMun();
+            final String ineRelacion = ineMunicipio.substring(0, 5);
+            final List<Relation> relaciones = RelationDAO.getInstance().getRelationsByTag("ine:municipio", ineRelacion);
             if (relaciones.size() == 1){
-                Relation municipio = relaciones.get(0);
-                Entity localidad = getLocalidad(ine.getCodine());
+                final Relation municipio = relaciones.get(0);
+                final Entity localidad = getLocalidad(ine.getCodine());
                 if (localidad != null) {
                     if (!municipio.containsMemberWithRole(ROLE_ADMIN_CENTRE)){
-                        RelationMember capital = new RelationMember();
+                        final RelationMember capital = new RelationMember();
                         capital.setEntity(localidad);
                         capital.setRole(ROLE_ADMIN_CENTRE);
                         municipio.addMember(capital);
@@ -106,9 +106,9 @@ public class Objetivo4 {
             	Log.log( " se encontraron " + relaciones.size() + " limites para el municipio " + ineRelacion + "/" + ineCapital);
             }            
         }
-        if (municipios.size() > 0){
-            String nombreArchivo = Config.getInstance().getOsmOutputFile("objetivo4.subir");
-            OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
+        if (!municipios.isEmpty()){
+            final String nombreArchivo = Config.getInstance().getOsmOutputFile("objetivo4.subir");
+            final OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(municipios, salida, false);
             salida.close();
             Log.log("Generado el archivo objetivo4 (" + municipios.size() + "):"+nombreArchivo);
@@ -118,10 +118,10 @@ public class Objetivo4 {
         }
         
     }
-    private static Entity getLocalidad(String codine) throws SQLException {
+    private static Entity getLocalidad(final String codine) throws SQLException {
         //Entity osm = NodeDAO.getInstance().getNode(id);
         
-        List<Node> localidades = NodeDAO.getInstance().getNodesByTag("ref:ine", codine);
+        final List<Node> localidades = NodeDAO.getInstance().getNodesByTag("ref:ine", codine);
         /*
          El validador de JOSM dice que no se puede poner admin_centre a un way,
          Asi que de momento desactivamos esto.

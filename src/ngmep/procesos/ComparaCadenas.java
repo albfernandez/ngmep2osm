@@ -22,7 +22,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class ComparaCadenas {
+public final class ComparaCadenas {
     private static final Locale LOCALE_ES = new Locale("ES", "es");
     
     
@@ -36,7 +36,7 @@ public class ComparaCadenas {
      *  elimina espacios en blanco
      *  elimina signos de puntuacion
      */
-    public static String normaliza1 (String cadena){
+    public static String normaliza1 (final String cadena){
         String cadena2 = cadena.toUpperCase(LOCALE_ES);
         cadena2 =cadena2.replaceAll("Á", "A");
         cadena2 =cadena2.replaceAll("É", "E");
@@ -55,7 +55,7 @@ public class ComparaCadenas {
      * @param cadena
      * @return
      */
-    public static String normaliza2(String cadena) {
+    public static String normaliza2(final String cadena) {
         String cadena2 = normaliza1 (cadena);
         cadena2 = cadena2.replaceAll("H", "");
         cadena2 = cadena2.replaceAll("B", "V");
@@ -68,7 +68,7 @@ public class ComparaCadenas {
      * @param cad2 La cadena simple
      * @return true si cad1 tiene "apellidos" de cad2
      */
-    public static boolean prefijoDe (String cad1, String cad2){
+    public static boolean prefijoDe (final String cad1, final String cad2){
         return cad2.toUpperCase(LOCALE_ES).indexOf(cad1.toUpperCase(LOCALE_ES)+ " DE") == 0;
     }
     /**
@@ -77,45 +77,45 @@ public class ComparaCadenas {
      * @param cad2 La cadena simple
      * @return true si cad1 tiene "apellidos" de cad2
      */
-    public static boolean prefijoDeN2(String cad1, String cad2){
-        String c1= normaliza2(cad1);
-        String c2 = normaliza2(cad2);
-        return c2.indexOf(c1 + "DE") == 0;
+    public static boolean prefijoDeN2(final String cad1, final String cad2){
+        final String normalizada1= normaliza2(cad1);
+        final String  normalizada2 = normaliza2(cad2);
+        return normalizada2.indexOf(normalizada1 + "DE") == 0;
     }
-    public static String quitaArticulos(String cadena){
-        String c1 = cadena.toUpperCase(LOCALE_ES);
-        c1 = c1.replaceAll("^URBANIZACIÓN "," ");
-        c1 = c1.replaceAll(" DE ", " ");
-        c1 = c1.replaceAll(" DEL ", " ");
-        c1 = c1.replaceAll(" LA " , " ");
-        c1 = c1.replaceAll(" LAS ", " ");
-        c1 = c1.replaceAll(" LOS ", " ");
-        c1 = c1.replaceAll(" EL ", " ");
-        c1 = c1.replaceAll("^DE ", " ");
-        c1 = c1.replaceAll("^LA " , " ");
-        c1 = c1.replaceAll("^LAS ", " ");
-        c1 = c1.replaceAll("^EL ", " ");
+    public static String quitaArticulos(final String cadena){
+        String cadena1 = cadena.toUpperCase(LOCALE_ES);
+        cadena1 = cadena1.replaceAll("^URBANIZACIÓN "," ");
+        cadena1 = cadena1.replaceAll(" DE ", " ");
+        cadena1 = cadena1.replaceAll(" DEL ", " ");
+        cadena1 = cadena1.replaceAll(" LA " , " ");
+        cadena1 = cadena1.replaceAll(" LAS ", " ");
+        cadena1 = cadena1.replaceAll(" LOS ", " ");
+        cadena1 = cadena1.replaceAll(" EL ", " ");
+        cadena1 = cadena1.replaceAll("^DE ", " ");
+        cadena1 = cadena1.replaceAll("^LA " , " ");
+        cadena1 = cadena1.replaceAll("^LAS ", " ");
+        cadena1 = cadena1.replaceAll("^EL ", " ");
         
-        return c1;
+        return cadena1;
     }
-    public static boolean articulos (String cad1, String cad2){
-        String c1 = quitaArticulos(cad1.toUpperCase(LOCALE_ES));
-        String c2 = quitaArticulos(cad2.toUpperCase(LOCALE_ES));
-        return normaliza2(c1).equals(normaliza2(c2));
+    public static boolean articulos (final String cad1, final String cad2){
+        final String cadena1 = quitaArticulos(cad1.toUpperCase(LOCALE_ES));
+        final String cadena2 = quitaArticulos(cad2.toUpperCase(LOCALE_ES));
+        return normaliza2(cadena1).equals(normaliza2(cadena2));
         
     }
-    public static boolean distanciaUnaLetra (String cad1, String cad2){
+    public static boolean distanciaUnaLetra (final String cad1, final String cad2){
         if (cad1.length() == cad2.length() ){
-            String c1 = cad1.toUpperCase(LOCALE_ES);
-            String c2 = cad2.toUpperCase(LOCALE_ES);
+            final String cadena1 = cad1.toUpperCase(LOCALE_ES);
+            final String cadena2 = cad2.toUpperCase(LOCALE_ES);
             for (int i = 0; i < cad1.length(); i++){
-                StringBuilder s1 = new StringBuilder();
-                StringBuilder s2 = new StringBuilder();
-                s1.append(c1);
-                s2.append(c2);
-                s1.setCharAt(i, 'X');
-                s2.setCharAt(i, 'X');
-                if (s1.toString().equals(s2.toString())){
+                final StringBuilder test1 = new StringBuilder();
+                final StringBuilder test2 = new StringBuilder();
+                test1.append(cadena1);
+                test2.append(cadena2);
+                test1.setCharAt(i, 'X');
+                test2.setCharAt(i, 'X');
+                if (test1.toString().equals(test2.toString())){
                     return true;
                 }
             }
@@ -124,18 +124,18 @@ public class ComparaCadenas {
             String mayor = cad1.toUpperCase(LOCALE_ES);
             String menor = cad2.toUpperCase(LOCALE_ES);
             if (mayor.length() < menor.length()){
-                String tmp = mayor;
+                final String tmp = mayor;
                 mayor = menor;
                 menor = tmp;
             }
             for (int i = 0; i < mayor.length(); i++){
-                StringBuilder s1 = new StringBuilder();
-                StringBuilder s2 = new StringBuilder();
-                s1.append(mayor);
-                s2.append(menor);
-                s1.setCharAt(i, 'X');
-                s2.insert(i, 'X');
-                if (s1.toString().equals(s2.toString())){
+                final StringBuilder test1 = new StringBuilder();
+                final StringBuilder test2 = new StringBuilder();
+                test1.append(mayor);
+                test2.append(menor);
+                test1.setCharAt(i, 'X');
+                test2.insert(i, 'X');
+                if (test1.toString().equals(test2.toString())){
                     return true;
                 }
             }
@@ -143,7 +143,7 @@ public class ComparaCadenas {
         
         return false;
     }
-    public static boolean iguales(String ine, String osm){
+    public static boolean iguales(final String ine, final String osm){
         if (StringUtils.isBlank(ine) || StringUtils.isBlank(osm)){
             return false;
         }
@@ -173,7 +173,7 @@ public class ComparaCadenas {
         }
         return false;
     }
-    public static boolean igualesObjetivo3(String ine, String osm) {
+    public static boolean igualesObjetivo3(final String ine, final String osm) {
         if (StringUtils.isBlank(ine) || StringUtils.isBlank(osm)){
             return false;
         }

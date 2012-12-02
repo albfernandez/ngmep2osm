@@ -28,7 +28,7 @@ import java.util.List;
 import ngmep.ngmep.datamodel.Entidad;
 import ngmep.osm.dao.Database;
 
-public class EntidadDAO {
+public final class EntidadDAO {
     
     public static final String QUERY_BASE = 
         "SELECT cod_ine, cod_ine_mun, nombre_mun, name, altura, origen_alturas, " + 
@@ -49,116 +49,116 @@ public class EntidadDAO {
         
     }
     
-	public Entidad getEntidadFromOsmId(long osmid) throws SQLException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+	public Entidad getEntidadFromOsmId(final long osmid) throws SQLException {
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		Entidad entidad = null;
 		
 		try {
-			ps = Database.getConnection().prepareStatement(QUERY_OSMID);
-			ps.setLong(1, osmid);
-			rs = ps.executeQuery();
+			statement = Database.getConnection().prepareStatement(QUERY_OSMID);
+			statement.setLong(1, osmid);
+			resultSet = statement.executeQuery();
 
-			if (rs.next()) {
-				entidad = getEntidad(rs);
+			if (resultSet.next()) {
+				entidad = getEntidad(resultSet);
 			}
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps != null) {
-				ps.close();
+			if (statement != null) {
+				statement.close();
 			}
 		}
 
 		return entidad;
 	}
 
-	public Entidad getEntidadFromCodIne(String codIne) throws SQLException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+	public Entidad getEntidadFromCodIne(final String codIne) throws SQLException {
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		Entidad entidad = null;
 		try {
-			ps = Database.getConnection().prepareStatement(QUERY_INE);
-			ps.setString(1, codIne);
-			rs = ps.executeQuery();
+			statement = Database.getConnection().prepareStatement(QUERY_INE);
+			statement.setString(1, codIne);
+			resultSet = statement.executeQuery();
 
-			if (rs.next()) {
-				entidad = getEntidad(rs);
+			if (resultSet.next()) {
+				entidad = getEntidad(resultSet);
 			}
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps != null) {
-				ps.close();
+			if (statement != null) {
+				statement.close();
 			}
 		}
 
 		return entidad;
 	}
 
-	private Entidad getEntidad(ResultSet rs) throws SQLException {
-		Entidad entidad = new Entidad();
-		entidad.setCodine(rs.getString("cod_ine"));
-		entidad.setCodineMun(rs.getString("cod_ine_mun"));
-		entidad.setNombreMun(rs.getString("nombre_mun"));
-		entidad.setName(rs.getString("name"));
-		entidad.setAltura(rs.getDouble("altura"));
-		entidad.setSourceAltura(rs.getString("origen_alturas"));
-		entidad.setLat(rs.getDouble("lat"));
-		entidad.setLon(rs.getDouble("lon"));
-		entidad.setOsmid(rs.getLong("osmid"));
-		entidad.setPlace(rs.getString("place"));
-		entidad.setPoblacion(rs.getDouble("poblacion"));
-		entidad.setAdministrativeLevel(rs.getInt("admin_level"));
-		entidad.setPoblacionMuni(rs.getDouble("poblacion_muni"));
-		entidad.setNombreOficial(rs.getString("official_name"));
-		entidad.setNombreAlternativo(rs.getString("alt_name"));
-		entidad.setNombreAntiguo(rs.getString("old_name"));
-		entidad.setName1(rs.getString("name1"));
-		entidad.setName2(rs.getString("name2"));
-		entidad.setLan1(rs.getString("lan1"));
-		entidad.setLan2(rs.getString("lan2"));
-		entidad.setFechaCambioNombre(rs.getString("fecha_cambio_nom"));
-		entidad.setDecreto(rs.getString("decreto_boletin_oficial"));
-		entidad.setLocName(rs.getString("loc_name"));
-		entidad.setEstadoManual(rs.getInt("estado_manual"));
-		entidad.setEstadoRobot(rs.getInt("estado_robot"));
-		entidad.setCodigoProvincia(rs.getString("cod_prov"));
-		entidad.setDecisionNombre(rs.getString("decision_nombre"));
+	private Entidad getEntidad(final ResultSet resultSet) throws SQLException {
+		final Entidad entidad = new Entidad();
+		entidad.setCodine(resultSet.getString("cod_ine"));
+		entidad.setCodineMun(resultSet.getString("cod_ine_mun"));
+		entidad.setNombreMun(resultSet.getString("nombre_mun"));
+		entidad.setName(resultSet.getString("name"));
+		entidad.setAltura(resultSet.getDouble("altura"));
+		entidad.setSourceAltura(resultSet.getString("origen_alturas"));
+		entidad.setLat(resultSet.getDouble("lat"));
+		entidad.setLon(resultSet.getDouble("lon"));
+		entidad.setOsmid(resultSet.getLong("osmid"));
+		entidad.setPlace(resultSet.getString("place"));
+		entidad.setPoblacion(resultSet.getDouble("poblacion"));
+		entidad.setAdministrativeLevel(resultSet.getInt("admin_level"));
+		entidad.setPoblacionMuni(resultSet.getDouble("poblacion_muni"));
+		entidad.setNombreOficial(resultSet.getString("official_name"));
+		entidad.setNombreAlternativo(resultSet.getString("alt_name"));
+		entidad.setNombreAntiguo(resultSet.getString("old_name"));
+		entidad.setName1(resultSet.getString("name1"));
+		entidad.setName2(resultSet.getString("name2"));
+		entidad.setLan1(resultSet.getString("lan1"));
+		entidad.setLan2(resultSet.getString("lan2"));
+		entidad.setFechaCambioNombre(resultSet.getString("fecha_cambio_nom"));
+		entidad.setDecreto(resultSet.getString("decreto_boletin_oficial"));
+		entidad.setLocName(resultSet.getString("loc_name"));
+		entidad.setEstadoManual(resultSet.getInt("estado_manual"));
+		entidad.setEstadoRobot(resultSet.getInt("estado_robot"));
+		entidad.setCodigoProvincia(resultSet.getString("cod_prov"));
+		entidad.setDecisionNombre(resultSet.getString("decision_nombre"));
 
 		return entidad;
 	}
 
-	public List<Entidad> getListFromRs(ResultSet rs) throws SQLException {
-		List<Entidad> lista = new ArrayList<Entidad>();
-		while (rs.next()) {
-			lista.add(getEntidad(rs));
+	public List<Entidad> getListFromRs(final ResultSet resultSet) throws SQLException {
+		final List<Entidad> lista = new ArrayList<Entidad>();
+		while (resultSet.next()) {
+			lista.add(getEntidad(resultSet));
 		}
 		return lista;
 	}
-    public void updateOsmId(Entidad entidad) throws SQLException {
-		PreparedStatement ps = null;
+    public void updateOsmId(final Entidad entidad) throws SQLException {
+		PreparedStatement statement = null;
 		try {
-			ps = Database.getConnection().prepareStatement(
+			statement = Database.getConnection().prepareStatement(
 					"update ngmep set osmid=? where cod_ine = ?");
-			ps.setLong(1, entidad.getOsmid());
-			ps.setString(2, entidad.getCodine());
-			ps.executeUpdate();
+			statement.setLong(1, entidad.getOsmid());
+			statement.setString(2, entidad.getCodine());
+			statement.executeUpdate();
 		} finally {
-			if (ps != null) {
-				ps.close();
+			if (statement != null) {
+				statement.close();
 			}
 		}
     }

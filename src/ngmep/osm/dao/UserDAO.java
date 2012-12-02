@@ -26,7 +26,7 @@ import java.util.Map;
 
 import ngmep.osm.datamodel.User;
 
-public class UserDAO {
+public final class UserDAO {
     
     private final Map<Integer, User> cache = new HashMap<Integer, User>();
 
@@ -39,40 +39,40 @@ public class UserDAO {
         super();
     }
     public static final String QUERY = "select id, name from users where id = ?";
-    public User getUser(int id) throws SQLException{
-        if (cache.get(id) == null){
-            User u = getUserFromBD(id);
-            cache.put(id, u);
+    public User getUser(final int userId) throws SQLException{
+        if (cache.get(userId) == null){
+            final User user = getUserFromBD(userId);
+            cache.put(userId, user);
         }
-        return cache.get(id);
+        return cache.get(userId);
     }
-    public User getUserFromBD(int id) throws SQLException{
-    	PreparedStatement ps = null;
-    	ResultSet rs = null;
+    public User getUserFromBD(final int userId) throws SQLException{
+    	PreparedStatement statement = null;
+    	ResultSet resultSet = null;
     	User user = null;
     	try {
-	        ps = Database.getConnection().prepareStatement(QUERY);
-	        ps.setInt(1, id);
-	        rs  = ps.executeQuery();
+	        statement = Database.getConnection().prepareStatement(QUERY);
+	        statement.setInt(1, userId);
+	        resultSet  = statement.executeQuery();
 	       
-	        if (rs.next()){
+	        if (resultSet.next()){
 	            user = new User();
-	            user.setId(id);
-	            user.setName(rs.getString("name"));
+	            user.setId(userId);
+	            user.setName(resultSet.getString("name"));
 	        }
     	}
     	finally {
-    		if (rs != null) {
+    		if (resultSet != null) {
     			try {
-    				rs.close();
+    				resultSet.close();
     			}
     			catch (Exception e) {
     				// Ignore
     			}
     		}
-    		if (ps != null) {
+    		if (statement != null) {
     			try {
-    				ps.close();
+    				statement.close();
     			}
     			catch (Exception e ) {
     				// Ignore

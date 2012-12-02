@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import ngmep.osm.datamodel.Entity;
@@ -38,22 +39,22 @@ import ngmep.osm.datamodel.Way;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-public class XMLExporter {
+public final class XMLExporter {
     
 	private XMLExporter () {
 		// No instances
 	}
 	
-    public static void export (Entity entity, OutputStream os) throws IOException {
-        List<Entity> lista = new ArrayList<Entity>();
+    public static void export (final Entity entity, final OutputStream output) throws IOException {
+        final List<Entity> lista = new ArrayList<Entity>();
         lista.add(entity);
-        export(lista, os, true);
+        export(lista, output, true);
     }
 
 
-    public static void export (List<Entity> list, OutputStream os, boolean force) throws IOException{
+    public static void export (final List<Entity> list, final OutputStream output, final boolean force) throws IOException{
         
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new BufferedOutputStream(os), "UTF-8"));
+        final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new BufferedOutputStream(output), "UTF-8"));
         writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
         writer.write("<osm version='0.6' generator='JOSM'>\n");
         for (Entity entity: list) {
@@ -62,7 +63,7 @@ public class XMLExporter {
         writer.write("</osm>\n");       
         writer.close();
     }
-    private static void internalExport (Entity entity, BufferedWriter writer, boolean force)throws IOException{
+    private static void internalExport (final Entity entity, final BufferedWriter writer, final boolean force)throws IOException{
         if (entity instanceof Node){
             exportNode((Node)entity, writer,force);
         }
@@ -73,59 +74,59 @@ public class XMLExporter {
             exportRelation((Relation) entity, writer, force);
         }
     }
-    private static void exportRelation(Relation relation, BufferedWriter writer, boolean force) throws IOException {
+    private static void exportRelation(final Relation relation, final BufferedWriter writer, final boolean force) throws IOException {
         if (!relation.isModified() && !force) {
             return;
         }
         for (RelationMember member: relation.getMembers()){
             internalExport (member.getEntity(), writer, true);
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("<relation");
-        sb.append(" id='").append(relation.getId()).append("'");
+        final StringBuilder stringRelation = new StringBuilder();
+        stringRelation.append("<relation");
+        stringRelation.append(" id='").append(relation.getId()).append("'");
         if (relation.isModified()){
-            sb.append(" action='").append("modify").append("'");
+            stringRelation.append(" action='").append("modify").append("'");
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        sb.append(" timestamp='").append(sdf.format(new Date(relation.getTimestamp()))).append("'");
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+        stringRelation.append(" timestamp='").append(sdf.format(new Date(relation.getTimestamp()))).append("'");
         if (relation.getUser() != null) {
-            sb.append(" uid='").append(relation.getUser().getId()).append("'");
-            sb.append(" user='").append(StringEscapeUtils.escapeXml(relation.getUser().getName())).append("'");
+            stringRelation.append(" uid='").append(relation.getUser().getId()).append("'");
+            stringRelation.append(" user='").append(StringEscapeUtils.escapeXml(relation.getUser().getName())).append("'");
         }
-        sb.append(" visible='true'");
-        sb.append(" version='").append(relation.getVersion()).append("'");
-        sb.append(" changeset='").append(relation.getChangeset()).append("'");
+        stringRelation.append(" visible='true'");
+        stringRelation.append(" version='").append(relation.getVersion()).append("'");
+        stringRelation.append(" changeset='").append(relation.getChangeset()).append("'");
         if (relation.getMembers().size() > 0 || relation.getNumTags() > 0){
-            sb.append(">\n");
+            stringRelation.append(">\n");
             
             for (RelationMember member: relation.getMembers()){
-                String tipo = "node";;
+                String tipo = "node";
                 if (member.getEntity() instanceof Node){
                     tipo = "node";
                 }
                 else if (member.getEntity() instanceof Way){
                     tipo = "way";
                 }
-                sb.append("    ");
-                sb.append("<member type='").append(tipo).append("'");
-                sb.append(" ref='").append(member.getEntity().getId()).append("'");
-                sb.append(" role='").append(StringEscapeUtils.escapeXml(member.getRole())).append("'");
-                sb.append(" />\n");
+                stringRelation.append("    ");
+                stringRelation.append("<member type='").append(tipo).append("'");
+                stringRelation.append(" ref='").append(member.getEntity().getId()).append("'");
+                stringRelation.append(" role='").append(StringEscapeUtils.escapeXml(member.getRole())).append("'");
+                stringRelation.append(" />\n");
             }
-            Set<String> tags = relation.getTagKeys();            
+            final Set<String> tags = relation.getTagKeys();            
             for (String key: tags){
-                sb.append("    ");
-                sb.append("<tag");
-                sb.append(" k='").append(StringEscapeUtils.escapeXml(key)).append("'");
-                sb.append(" v='").append(StringEscapeUtils.escapeXml(relation.getTag(key))).append("'");
-                sb.append(" />\n");
+                stringRelation.append("    ");
+                stringRelation.append("<tag");
+                stringRelation.append(" k='").append(StringEscapeUtils.escapeXml(key)).append("'");
+                stringRelation.append(" v='").append(StringEscapeUtils.escapeXml(relation.getTag(key))).append("'");
+                stringRelation.append(" />\n");
             }
-            sb.append("</relation>\n");
+            stringRelation.append("</relation>\n");
         }
         else {
-            sb.append("/>\n");
+            stringRelation.append("/>\n");
         }
-        writer.write(sb.toString());
+        writer.write(stringRelation.toString());
         /*
          <osm version="0.6" generator="OpenStreetMap server">
   <relation id="347824" visible="true" timestamp="2011-09-11T16:04:29Z" version="2" changeset="9272105" user="afernandez" uid="41263">
@@ -151,98 +152,98 @@ public class XMLExporter {
 
          */
     }
-    private static void exportWay(Way way, BufferedWriter writer, boolean force) throws IOException {
+    private static void exportWay(final Way way, final BufferedWriter writer, final boolean force) throws IOException {
         if (!way.isModified() && !force){
             return;
         }
         for (Node node : way.getNodes()){
             exportNode(node, writer,true);
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("  ");
-        sb.append("<way");
-        sb.append(" id='").append(way.getId()).append("'");
+        final StringBuilder stringWay = new StringBuilder();
+        stringWay.append("  ");
+        stringWay.append("<way");
+        stringWay.append(" id='").append(way.getId()).append("'");
         if (way.isModified()){
-            sb.append(" action='").append("modify").append("'");
+            stringWay.append(" action='").append("modify").append("'");
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        sb.append(" timestamp='").append(sdf.format(new Date(way.getTimestamp()))).append("'");
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+        stringWay.append(" timestamp='").append(sdf.format(new Date(way.getTimestamp()))).append("'");
         if (way.getUser() != null) {
-            sb.append(" uid='").append(way.getUser().getId()).append("'");
-            sb.append(" user='").append(StringEscapeUtils.escapeXml(way.getUser().getName())).append("'");
+            stringWay.append(" uid='").append(way.getUser().getId()).append("'");
+            stringWay.append(" user='").append(StringEscapeUtils.escapeXml(way.getUser().getName())).append("'");
         }
-        sb.append(" visible='true'");
-        sb.append(" version='").append(way.getVersion()).append("'");
-        sb.append(" changeset='").append(way.getChangeset()).append("'");
+        stringWay.append(" visible='true'");
+        stringWay.append(" version='").append(way.getVersion()).append("'");
+        stringWay.append(" changeset='").append(way.getChangeset()).append("'");
         if (way.getNodes().size() > 0 || way.getNumTags() > 0){
-            sb.append(">\n");
+            stringWay.append(">\n");
             for (Node node: way.getNodes()){
-                sb.append("    ");
-                sb.append("<nd");
-                sb.append(" ref='").append(node.getId()).append("'");
-                sb.append(" />\n");
+                stringWay.append("    ");
+                stringWay.append("<nd");
+                stringWay.append(" ref='").append(node.getId()).append("'");
+                stringWay.append(" />\n");
             }
-            Set<String> tags = way.getTagKeys();
+            final Set<String> tags = way.getTagKeys();
             for (String key: tags){
-                sb.append("    ");
-                sb.append("<tag");
-                sb.append(" k='").append(StringEscapeUtils.escapeXml(key)).append("'");
-                sb.append(" v='").append(StringEscapeUtils.escapeXml(way.getTag(key))).append("'");
-                sb.append(" />\n");
+                stringWay.append("    ");
+                stringWay.append("<tag");
+                stringWay.append(" k='").append(StringEscapeUtils.escapeXml(key)).append("'");
+                stringWay.append(" v='").append(StringEscapeUtils.escapeXml(way.getTag(key))).append("'");
+                stringWay.append(" />\n");
             }
-            sb.append("  </way>\n");
+            stringWay.append("  </way>\n");
         }
         else {
-            sb.append("/>\n");
+            stringWay.append("/>\n");
         }
-        writer.write(sb.toString());
+        writer.write(stringWay.toString());
 
     }
-    private static void exportNode(Node node, BufferedWriter writer, boolean force) throws IOException{
+    private static void exportNode(final Node node, final BufferedWriter writer, final boolean force) throws IOException{
         if (!node.isModified() && !force) {
             return;
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("  ");
-        sb.append("<node");
-        sb.append(" id='").append(node.getId()).append("'");
+        final StringBuilder nodeString = new StringBuilder();
+        nodeString.append("  ");
+        nodeString.append("<node");
+        nodeString.append(" id='").append(node.getId()).append("'");
         if (node.isModified()){
-            sb.append(" action='").append("modify").append("'");
+            nodeString.append(" action='").append("modify").append("'");
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        sb.append(" timestamp='").append(sdf.format(new Date(node.getTimestamp()))).append("'");
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+        nodeString.append(" timestamp='").append(sdf.format(new Date(node.getTimestamp()))).append("'");
         if (node.getUser() != null) {
-            sb.append(" uid='").append(node.getUser().getId()).append("'");
-            sb.append(" user='").append(StringEscapeUtils.escapeXml(node.getUser().getName())).append("'");
+            nodeString.append(" uid='").append(node.getUser().getId()).append("'");
+            nodeString.append(" user='").append(StringEscapeUtils.escapeXml(node.getUser().getName())).append("'");
         }
-        sb.append(" visble='true'");
-        sb.append(" version='").append(node.getVersion()).append("'");
-        sb.append(" changeset='").append(node.getChangeset()).append("'");
-        sb.append(" lat='").append(node.getLat()).append("'");
-        sb.append(" lon='").append(node.getLon()).append("'");
+        nodeString.append(" visble='true'");
+        nodeString.append(" version='").append(node.getVersion()).append("'");
+        nodeString.append(" changeset='").append(node.getChangeset()).append("'");
+        nodeString.append(" lat='").append(node.getLat()).append("'");
+        nodeString.append(" lon='").append(node.getLon()).append("'");
         
         if (node.getNumTags() > 0){
-            sb.append(">\n");
+            nodeString.append(">\n");
             
-            Set<String> tags = node.getTagKeys();
+            final Set<String> tags = node.getTagKeys();
             for (String key: tags){
-                sb.append("    ");
-                sb.append("<tag");
-                sb.append(" k='").append(StringEscapeUtils.escapeXml(key)).append("'");
-                sb.append(" v='").append(StringEscapeUtils.escapeXml(node.getTag(key))).append("'");
-                sb.append("/>\n");
+                nodeString.append("    ");
+                nodeString.append("<tag");
+                nodeString.append(" k='").append(StringEscapeUtils.escapeXml(key)).append("'");
+                nodeString.append(" v='").append(StringEscapeUtils.escapeXml(node.getTag(key))).append("'");
+                nodeString.append("/>\n");
             }
-            sb.append("  </node>\n");
+            nodeString.append("  </node>\n");
             
         }
         else {
-            sb.append("/>\n");
+            nodeString.append("/>\n");
         }
         
         
        
         
-        writer.write(sb.toString());
+        writer.write(nodeString.toString());
     }
 }
 

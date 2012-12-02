@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Way extends Entity{
-    private final List<Node> nodos = new ArrayList<Node>();
+    private final transient List<Node> nodos = new ArrayList<Node>();
     public Way(){
         super();
     }
-    public void addNode(Node node) {
+    public void addNode(final Node node) {
         this.nodos.add(node);
         setModified(true);
     }
@@ -35,7 +35,7 @@ public class Way extends Entity{
         return this.nodos;
     }
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
     	return super.equals(obj);
     }
     @Override

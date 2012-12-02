@@ -24,14 +24,14 @@ import java.util.Set;
 
 public class Entity {
 
-    private long id;
+    private long id; // NOPMD
     private User user;
     private int version;
     private long changeset;
     private long timestamp;
-    private final Map<String, String> tags = new HashMap<String, String>();
+    private final transient Map<String, String> tags = new HashMap<String, String>();
     private boolean modified = false;
-    
+    private static final int prime = 31;
     protected Entity(){
         super();
     }
@@ -41,7 +41,7 @@ public class Entity {
         return modified;
     }
 
-    public void setModified(boolean modified) {
+    public void setModified(final boolean modified) {
         this.modified = modified;
     }
 
@@ -49,27 +49,27 @@ public class Entity {
     public long getId() {
         return id;
     }
-    public void setId(long id) {
-        if (this.id != id) {
-            this.id = id;
+    public void setId(final long identifier) {
+        if (this.id != identifier) {
+            this.id = identifier;
             setModified(true);
         }
     }
-    public String getTag(String tagName) {
+    public String getTag(final String tagName) {
         return tags.get(tagName);
     }
-    public void setTag(String tagName, String value) {
+    public void setTag(final String tagName, final String value) {
         if (value == null) {
             removeTag(tagName);
             return;
         }
-        String valtrim =value.trim();
+        final String valtrim =value.trim();
         if (!tags.containsKey(tagName) || !valtrim.equals(tags.get(tagName))){
             tags.put(tagName, valtrim);
             setModified(true);
         }
     }
-    public void removeTag(String tagName){
+    public void removeTag(final String tagName){
         if (tags.containsKey(tagName)){
             tags.remove(tagName);
             setModified(true);
@@ -79,14 +79,14 @@ public class Entity {
     public User getUser() {
         return user;
     }
-    public void setUser(User user) {
+    public void setUser(final User user) {
         this.user = user;
         setModified(true);
     }
     public int getVersion() {
         return version;
     }
-    public void setVersion(int version) {
+    public void setVersion(final int version) {
         if (this.version != version){
             this.version = version;
             setModified(true);
@@ -95,7 +95,7 @@ public class Entity {
     public long getChangeset() {
         return changeset;
     }
-    public void setChangeset(long changeset) {
+    public void setChangeset(final long changeset) {
         if (this.changeset != changeset) {
             this.changeset = changeset;
             setModified(true);
@@ -104,7 +104,7 @@ public class Entity {
     public long getTimestamp() {
         return timestamp;
     }
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(final long timestamp) {
         if (this.timestamp != timestamp){
             this.timestamp = timestamp;
             setModified(true);
@@ -116,14 +116,14 @@ public class Entity {
     public Set<String> getTagKeys () {
         return  tags.keySet();
     }
-    public boolean containsTag (String key){
+    public boolean containsTag (final String key){
         return tags.containsKey(key);
     }
 
 
     @Override
     public int hashCode() {
-        final int prime = 31;
+
         int result = 1;
         result = prime * result + (int) (id ^ (id >>> 32));
         return result;
@@ -131,7 +131,7 @@ public class Entity {
 
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj){
             return true;
         }
@@ -141,7 +141,7 @@ public class Entity {
         if (getClass() != obj.getClass()){
             return false;
         }
-        Entity other = (Entity) obj;
+        final Entity other = (Entity) obj;
         if (id != other.id){
             return false;
         }

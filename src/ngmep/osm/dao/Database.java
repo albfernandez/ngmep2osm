@@ -29,7 +29,7 @@ import java.util.Properties;
 
 import ngmep.config.Config;
 
-public class Database {
+public final class Database {
 
     
     private static Connection connection;
@@ -41,11 +41,11 @@ public class Database {
     public static synchronized Connection getConnection () throws   SQLException {
         if (connection == null){
             try {
-            Properties config = Config.getInstance().getDatabaseCredentials();
+            final Properties config = Config.getInstance().getDatabaseCredentials();
             
-            String url = "jdbc:postgresql://" + config.getProperty("host") + "/" + config.getProperty("database");
+            final String url = "jdbc:postgresql://" + config.getProperty("host") + "/" + config.getProperty("database");
             
-            Connection tmpConnection = DriverManager.getConnection(url, config);
+            final Connection tmpConnection = DriverManager.getConnection(url, config); //NOPMD
             checkSimpleSchema(tmpConnection);
             connection = tmpConnection;
             }
@@ -62,22 +62,22 @@ public class Database {
         }
     }
     
-    private static void checkSimpleSchema(Connection connection) {
-    	DatabaseMetaData md = null;
-    	ResultSet rs = null;
+    private static void checkSimpleSchema(final Connection connection) {
+    	DatabaseMetaData metadata = null;
+    	ResultSet resultSet = null;
 		try {
-			md = connection.getMetaData();
-			rs = md.getTables(null, null, "node_tags", null);
-	        simpleSchema = rs.next();
+			metadata = connection.getMetaData();
+			resultSet = metadata.getTables(null, null, "node_tags", null);
+	        simpleSchema = resultSet.next();
 	        
 		}		
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
 		finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore

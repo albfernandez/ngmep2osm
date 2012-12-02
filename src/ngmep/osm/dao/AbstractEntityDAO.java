@@ -26,11 +26,11 @@ import ngmep.osm.datamodel.Entity;
 
 public class AbstractEntityDAO {
 
-    public void initTags (Entity e, ResultSet rs) throws SQLException {
-        while (rs.next()){
-            String key = rs.getString("k");
-            String value = rs.getString("v");
-            e.setTag(key, value);
+    public void initTags (final Entity entity, final ResultSet resultSet) throws SQLException {
+        while (resultSet.next()){
+            final String key = resultSet.getString("k");
+            final String value = resultSet.getString("v");
+            entity.setTag(key, value);
         }
     }
 }

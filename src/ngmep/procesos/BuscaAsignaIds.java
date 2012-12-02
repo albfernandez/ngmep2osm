@@ -39,7 +39,7 @@ import ngmep.osm.datamodel.Node;
 import ngmep.osm.log.Log;
 import ngmep.xml.XMLExporter;
 
-public class BuscaAsignaIds {
+public final class BuscaAsignaIds {
 //    private static final String[] PLACES = new String[] { "city","town", "village", "hamlet", "suburb","isolated_dwelling"};
 
 
@@ -50,29 +50,29 @@ public class BuscaAsignaIds {
     }
 
     public static void buscaOsmId () throws SQLException, ClassNotFoundException, IOException{
-        String query  = EntidadDAO.QUERY_BASE + " where osmid is  null and estado_robot = 0 and estado_manual = 0  " ;
+        final String query  = EntidadDAO.QUERY_BASE + " where osmid is  null and estado_robot = 0 and estado_manual = 0  " ;
 
-        ResultSet rs = null;
+        ResultSet resultSet = null;
         Statement stmt = null;
         List<Entidad> entidades = null; 
         try {
         	stmt = Database.getConnection().createStatement();
-        	rs = stmt.executeQuery(query);
-        	entidades = EntidadDAO.getInstance().getListFromRs(rs);
+        	resultSet = stmt.executeQuery(query);
+        	entidades = EntidadDAO.getInstance().getListFromRs(resultSet);
         }
         finally {
-        	if (rs != null) {
-        		try {rs.close();} catch (Exception e) {}
+        	if (resultSet != null) {
+        		try {resultSet.close();} catch (Exception e) {}
         	}
         	if (stmt != null) {
         		stmt.close();
         	}
         }
-        List<Entity> entidadesOsm = new ArrayList<Entity>();
-        List<Entity> entidadesIne = new ArrayList<Entity>();
-        List<Entity> entidadesActualizadas = new ArrayList<Entity>();
+        final List<Entity> entidadesOsm = new ArrayList<Entity>();
+        final List<Entity> entidadesIne = new ArrayList<Entity>();
+        final List<Entity> actualizadas = new ArrayList<Entity>();
         for (Entidad entidad: entidades) {            
-            List<Node> nodos = NodeDAO.getInstance().getPoblaciones(entidad.getLon(), entidad.getLat(), 0.02);
+            final List<Node> nodos = NodeDAO.getInstance().getPoblaciones(entidad.getLon(), entidad.getLat(), 0.02);
             for (Node nodo : nodos){
                 String nombreOsm = null;
                 if (nodo.containsTag( "name")){
@@ -93,7 +93,7 @@ public class BuscaAsignaIds {
                 else {
                     if (!entidadesOsm.contains(nodo)){
                         entidadesOsm.add(nodo);
-                        Node ine = new Node();
+                        final Node ine = new Node();
                         ine.setId(contador--);
                         entidad.setDecisionNombre("OSM");
                         Objetivo3.actualiza(ine, entidad);           
@@ -101,10 +101,10 @@ public class BuscaAsignaIds {
                         if (!entidadesIne.contains(ine)){
                             entidadesIne.add(ine);
                         }
-                        Node x = NodeDAO.getInstance().getNode(nodo.getId());
-                        Objetivo3.actualiza(x, entidad);
-                        if (!entidadesActualizadas.contains(x)){
-                            entidadesActualizadas.add(x);
+                        final Node nodo2 = NodeDAO.getInstance().getNode(nodo.getId());
+                        Objetivo3.actualiza(nodo2, entidad);
+                        if (!actualizadas.contains(nodo2)){
+                            actualizadas.add(nodo2);
                         }
                     }
                 }
@@ -120,11 +120,11 @@ public class BuscaAsignaIds {
         XMLExporter.export(entidadesIne, salida,true);
         salida.close();
         salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.subir"))); 
-        XMLExporter.export(entidadesActualizadas, salida,true);
+        XMLExporter.export(actualizadas, salida,true);
         salida.close();
     }
     
-    private static void actualizarIguales(Entidad entidad, Node nodo) throws SQLException{
+    private static void actualizarIguales(final Entidad entidad, final Node nodo) throws SQLException{
     	Log.log("Actualizando:" + entidad.getCodine() + ":" + nodo.getId()); 
         entidad.setOsmid(nodo.getId());
         EntidadDAO.getInstance().updateOsmId(entidad);

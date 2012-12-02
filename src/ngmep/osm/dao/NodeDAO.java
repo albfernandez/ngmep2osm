@@ -31,7 +31,7 @@ import ngmep.osm.datamodel.Node;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class NodeDAO extends AbstractEntityDAO {
+public final class NodeDAO extends AbstractEntityDAO {
     
     public static final String QUERY_BASE = 
         "select id, version, user_id, tstamp, changeset_id, st_x(geom) as lon, st_y(geom) as lat from nodes n ";
@@ -51,11 +51,11 @@ public class NodeDAO extends AbstractEntityDAO {
         super();
     }
     
-    public List<Node> getNodesByTag(String tagName) throws SQLException {
+    public List<Node> getNodesByTag(final String tagName) throws SQLException {
         return getNodesByTag(tagName, null);
     }
 
-	public List<Node> getNodesByTag(String tagName, String value)
+	public List<Node> getNodesByTag(final String tagName, final String value)
 			throws SQLException {
 
 		String query = QUERY_BASE
@@ -64,29 +64,29 @@ public class NodeDAO extends AbstractEntityDAO {
 			query += " and t.v = ?";
 		}
 		query += ")";
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		List<Node> resultado = null;
 		try {
-			ps = Database.getConnection().prepareStatement(query);
-			ps.setString(1, tagName);
+			statement = Database.getConnection().prepareStatement(query);
+			statement.setString(1, tagName);
 			if (!StringUtils.isBlank(value)) {
-				ps.setString(2, value);
+				statement.setString(2, value);
 			}
-			rs = ps.executeQuery();
-			resultado = getNodes(rs);
+			resultSet = statement.executeQuery();
+			resultado = getNodes(resultSet);
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps != null) {
+			if (statement != null) {
 				try {
-					ps.close();
+					statement.close();
 				}
 				catch (Exception e) {
 					// ignore
@@ -98,46 +98,46 @@ public class NodeDAO extends AbstractEntityDAO {
 
     }
 
-	public List<Node> getNodes(ResultSet rs) throws SQLException {
-		List<Node> lista = new ArrayList<Node>();
-		while (rs.next()) {
-			lista.add(getNode(rs));
+	public List<Node> getNodes(final ResultSet resultSet) throws SQLException {
+		final List<Node> lista = new ArrayList<Node>();
+		while (resultSet.next()) {
+			lista.add(getNode(resultSet));
 		}
 		return lista;
 	}
 
-	private Node getNode(ResultSet rs) throws SQLException {
-		long id = rs.getLong("id");
-		Node node = new Node();
-		node.setId(id);
-		node.setUser(UserDAO.getInstance().getUser(rs.getInt("user_id")));
-		node.setVersion(rs.getInt("version"));
-		Calendar calendario = new GregorianCalendar();
-		node.setTimestamp(rs.getTimestamp("tstamp", calendario).getTime());
-		node.setChangeset(rs.getLong("changeset_id"));
-		node.setLat(rs.getDouble("lat"));
-		node.setLon(rs.getDouble("lon"));
+	private Node getNode(final ResultSet resultSet) throws SQLException {
+		final long identifier = resultSet.getLong("id");
+		final Node node = new Node();
+		node.setId(identifier);
+		node.setUser(UserDAO.getInstance().getUser(resultSet.getInt("user_id")));
+		node.setVersion(resultSet.getInt("version"));
+		final Calendar calendario = new GregorianCalendar();
+		node.setTimestamp(resultSet.getTimestamp("tstamp", calendario).getTime());
+		node.setChangeset(resultSet.getLong("changeset_id"));
+		node.setLat(resultSet.getDouble("lat"));
+		node.setLon(resultSet.getDouble("lon"));
 
-		PreparedStatement ps2 = null;
-		ResultSet rs2 = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet2 = null;
 		try {
-			ps2 = Database.getConnection().prepareStatement(
+			statement = Database.getConnection().prepareStatement(
 					getQueryNodeTags());
-			ps2.setLong(1, id);
-			rs2 = ps2.executeQuery();
-			initTags(node, rs2);
+			statement.setLong(1, identifier);
+			resultSet2 = statement.executeQuery();
+			initTags(node, resultSet2);
 		} finally {
-			if (rs2 != null) {
+			if (resultSet2 != null) {
 				try {
-					rs2.close();
+					resultSet2.close();
 				}
 				catch (Exception e){
 					// Ignore
 				}
 			}
-			if (ps2 != null) {
+			if (statement != null) {
 				try {
-					ps2.close();
+					statement.close();
 				}
 				catch (Exception e) {
 					// Ignore
@@ -148,37 +148,37 @@ public class NodeDAO extends AbstractEntityDAO {
 		return node;
 	}
 
-	public Node getNode(long id) throws SQLException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+	public Node getNode(final long nodeId) throws SQLException {
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		Node node = null;
 		try {
-			ps = Database.getConnection().prepareStatement(QUERY_NODE);
-			ps.setLong(1, id);
-			rs = ps.executeQuery();
+			statement = Database.getConnection().prepareStatement(QUERY_NODE);
+			statement.setLong(1, nodeId);
+			resultSet = statement.executeQuery();
 
-			if (rs.next()) {
-				node = getNode(rs);
+			if (resultSet.next()) {
+				node = getNode(resultSet);
 			}
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps != null) {
-				ps.close();
+			if (statement != null) {
+				statement.close();
 			}
 		}
 
 		return node;
 	}
     
-    public List<Node> getNode(double lon, double lat, double distance, String key, String[] values) throws SQLException {
-        StringBuilder query = new StringBuilder(); 
+    public List<Node> getNode(final double lon, final double lat, final double distance, final String key, final String[] values) throws SQLException {
+        final StringBuilder query = new StringBuilder(); 
         
         query.append("select id, version, user_id, tstamp, changeset_id, st_x(geom) as lon, st_y(geom) as lat from nodes n ");
         query.append(" where 1=1 and n.id > 0 ");
@@ -194,71 +194,71 @@ public class NodeDAO extends AbstractEntityDAO {
             query.append(")");
         }
         query.append(" and st_distance(st_setsrid(st_point(?,?),4326), geom) < ?");
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
         List<Node> lista = null;
 		try {
-			ps = Database.getConnection().prepareStatement(query.toString());
+			statement = Database.getConnection().prepareStatement(query.toString());
 			int indice = 1;
 
 			if (!StringUtils.isBlank(key)) {
-				ps.setString(indice++, key);
+				statement.setString(indice++, key);
 				if (values != null) {
 					for (String valor : values) {
-						ps.setString(indice++, valor);
+						statement.setString(indice++, valor);
 					}
 				}
 			}
-			ps.setDouble(indice++, lon);
-			ps.setDouble(indice++, lat);
-			ps.setDouble(indice++, distance);
-			rs = ps.executeQuery();
+			statement.setDouble(indice++, lon);
+			statement.setDouble(indice++, lat);
+			statement.setDouble(indice++, distance);
+			resultSet = statement.executeQuery();
 
-			lista = getNodes(rs);
+			lista = getNodes(resultSet);
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e){
 					// Ignore
 				}
 			}
-			if (ps != null) {
-				ps.close();
+			if (statement != null) {
+				statement.close();
 			}
 		}
 
 		return lista;
 	}
     
-    public List<Node> getPoblaciones(double lon, double lat, double distance) throws SQLException {
+    public List<Node> getPoblaciones(final double lon, final double lat, final double distance) throws SQLException {
     	String query = "select id, version, user_id, tstamp, changeset_id, st_x(geom) as lon, st_y(geom) as lat from poblaciones_osm  ";
     	query += " where 1=1 ";
     	query += " and st_distance(st_setsrid(st_point(?,?),4326), geom) < ?";
     	
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		List<Node> lista = null;
 		try {
-			ps = Database.getConnection().prepareStatement(query);
-			ps.setDouble(1, lon);
-			ps.setDouble(2, lat);
-			ps.setDouble(3, distance);
-			rs = ps.executeQuery();
+			statement = Database.getConnection().prepareStatement(query);
+			statement.setDouble(1, lon);
+			statement.setDouble(2, lat);
+			statement.setDouble(3, distance);
+			resultSet = statement.executeQuery();
 
-			lista = getNodes(rs);
+			lista = getNodes(resultSet);
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps != null) {
-				ps.close();
+			if (statement != null) {
+				statement.close();
 			}
 		}
 

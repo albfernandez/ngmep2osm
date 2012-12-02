@@ -25,21 +25,23 @@ import java.util.List;
 
 public class Relation extends Entity{
 
-    private final List<RelationMember> members = new ArrayList<RelationMember>();
+    private final transient  List<RelationMember> members = new ArrayList<RelationMember>();
+    
     public Relation () {
         super();
     }
     public  List<RelationMember> getMembers() {
         return this.members;
     }
-    public void addMember(RelationMember member){
+
+    public void addMember(final RelationMember member){
         if (!this.members.contains(member)){
             this.members.add(member);
             setModified(true);
         }
         
     }
-    public boolean containsMemberWithRole(String role) {
+    public boolean containsMemberWithRole(final String role) {
         for (RelationMember member: members) {
             if (role.equals(member.getRole())){
                 return true;
@@ -48,7 +50,7 @@ public class Relation extends Entity{
         return false;
     }
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
     	return super.equals(obj);
     }
     @Override

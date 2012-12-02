@@ -44,9 +44,9 @@ import ngmep.xml.XMLExporter;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class Objetivo3 {
+public final class Objetivo3 {
     
-	public static final String INSTITUTO_GEGORAFICO = "Instituto Geográfico Nacional";
+	public static final String IGN = "Instituto Geográfico Nacional";
 	
 
     private static int iderror = 0;
@@ -55,13 +55,13 @@ public class Objetivo3 {
     	//No instance
     }
     
-    private static String doubleToString(double d){
-        return Long.toString((long) d);
+    private static String doubleToString(final double valor){
+        return Long.toString((long) valor);
     }
     
     
-    public static Entity entidad2node(Entidad ine, String error) {
-        Node osm = new Node();
+    public static Entity entidad2node(final Entidad ine, final String error) {
+        final Node osm = new Node();
         osm.setId(--iderror);
         osm.setLat(ine.getLat());
         osm.setLon(ine.getLon());
@@ -96,7 +96,7 @@ public class Objetivo3 {
         return osm;
     }
     
-    public static String actualiza (Entity osm, Entidad ine) {
+    public static String actualiza (final Entity osm, final Entidad ine) {
         /*
          * Para los casos que tienen ine:ref
          */
@@ -162,9 +162,9 @@ public class Objetivo3 {
         
         // Rellenamos source,
         if (!osm.containsTag("source")){
-            osm.setTag("source", INSTITUTO_GEGORAFICO);
+            osm.setTag("source", IGN);
         }
-        else if (!osm.getTag("source").contains(INSTITUTO_GEGORAFICO) ){        
+        else if (!osm.getTag("source").contains(IGN) ){        
             osm.setTag("source", osm.getTag("source")+";"+ "Instituto Geográfico Nacional");
         }
         osm.setTag("source:date", "2011-06");
@@ -203,25 +203,25 @@ public class Objetivo3 {
 
     
     public static void ejecutaObjetivo3 () throws SQLException, ClassNotFoundException, IOException{
-        String query  = EntidadDAO.QUERY_BASE + " where  estado_manual >= 0 and estado_robot = 0";
-        Statement stmt = null;
-		ResultSet rs = null;
+        final String query  = EntidadDAO.QUERY_BASE + " where  estado_manual >= 0 and estado_robot = 0";
+        Statement statement = null;
+		ResultSet resultSet = null;
 		List<Entidad> entidades = null;
 		try {
 
-			stmt = Database.getConnection().createStatement();
-			rs = stmt.executeQuery(query);
-			entidades = EntidadDAO.getInstance().getListFromRs(rs);
+			statement = Database.getConnection().createStatement();
+			resultSet = statement.executeQuery(query);
+			entidades = EntidadDAO.getInstance().getListFromRs(resultSet);
 		} finally {
-			if (rs != null) {
-				try {rs.close();} catch (Exception e) {}
+			if (resultSet != null) {
+				try {resultSet.close();} catch (Exception e) {}
 			}
-			if (stmt != null) {
-				stmt.close();
+			if (statement != null) {
+				statement.close();
 			}
 		}
-        List<Entity> nodos = new ArrayList<Entity>();
-        List<Entity> errores = new ArrayList<Entity>();
+        final List<Entity> nodos = new ArrayList<Entity>();
+        final List<Entity> errores = new ArrayList<Entity>();
         String error = "";
         for (Entidad ine: entidades) {
             Entity osm = null;
@@ -261,9 +261,9 @@ public class Objetivo3 {
         
         }
         
-        if (nodos.size() > 0){
-            String nombreArchivo = Config.getInstance().getOsmOutputFile("objetivo3.subir");
-            OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
+        if (!nodos.isEmpty()){
+            final String nombreArchivo = Config.getInstance().getOsmOutputFile("objetivo3.subir");
+            final OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(nodos, salida, false);
             salida.close();
             Log.log("Generado el archivo (" + nodos.size() + "):"+nombreArchivo);
@@ -271,16 +271,16 @@ public class Objetivo3 {
         else {
         	Log.log("No se ha generado el archivo.");
         }
-        if (errores.size() > 0) {
-            String nombreArchivo = Config.getInstance().getOsmOutputFile("objetivo3.errores");
-            OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
+        if (!errores.isEmpty()) {
+            final String nombreArchivo = Config.getInstance().getOsmOutputFile("objetivo3.errores");
+            final OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(errores, salida, true);
             salida.close();
             Log.log("Generado el archivo(" + errores.size() + "):"+nombreArchivo);
         }
         
     }
-    private static boolean distanciaExcesiva(Entidad ine, Entity osm) {
+    private static boolean distanciaExcesiva(final Entidad ine, final Entity osm) {
         try {
             Node nodo = null;
             if (osm instanceof Node){
@@ -292,8 +292,8 @@ public class Objetivo3 {
             else {
             	throw new IllegalArgumentException("osm must be a way or a node");
             }
-            double difLatitud = Math.abs(ine.getLat() - nodo.getLat());
-            double difLongitud = Math.abs(ine.getLon() - nodo.getLon());
+            final double difLatitud = Math.abs(ine.getLat() - nodo.getLat());
+            final double difLongitud = Math.abs(ine.getLon() - nodo.getLon());
             
             return (difLatitud > 0.5 || difLongitud > 0.5);
         }
@@ -303,7 +303,7 @@ public class Objetivo3 {
 
     }
 
-    private static Entity getLocalidadOsm(long osmid) throws SQLException {
+    private static Entity getLocalidadOsm(final long osmid) throws SQLException {
         Entity osm = NodeDAO.getInstance().getNode(osmid);
         if (osm == null || !esLocalidad(osm)){
             osm = WayDAO.getInstance().getWay(osmid);
@@ -313,25 +313,25 @@ public class Objetivo3 {
         }
         return osm;
     }
-    private static boolean esLocalidad(Entity osm) {
+    private static boolean esLocalidad(final Entity osm) {
         return osm.containsTag("place") && osm.containsTag("name"); 
     }
 
-	private static void marcarProcesado(Entidad ine) throws SQLException {
+	private static void marcarProcesado(final Entidad ine) throws SQLException {
 		String query = "update ngmep set estado_robot = 1 where cod_ine = ?";
-		PreparedStatement ps = null;
+		PreparedStatement statement = null;
 		try {
-			ps = Database.getConnection().prepareStatement(query);
-			ps.setString(1, ine.getCodine());
-			ps.executeUpdate();
+			statement = Database.getConnection().prepareStatement(query);
+			statement.setString(1, ine.getCodine());
+			statement.executeUpdate();
 		} finally {
-			if (ps != null) {
-				ps.close();
+			if (statement != null) {
+				statement.close();
 			}
 		}
 	}
 
-    private static void estableceNombresAlternativos (Entity osm, Entidad ine){
+    private static void estableceNombresAlternativos (final Entity osm, final Entidad ine){
         if (!StringUtils.isBlank(ine.getLan1()) && !StringUtils.isBlank(ine.getName1())) {
             String lan = "name:" + ine.getLan1();
             if (!osm.containsTag(lan)) {
@@ -361,8 +361,8 @@ public class Objetivo3 {
     }
 
     
-    private static boolean ajustarNombre(Entity osm, Entidad ine) {
-        String nombre = osm.getTag("name");        
+    private static boolean ajustarNombre(final Entity osm, final Entidad ine) {
+        final String nombre = osm.getTag("name");        
         if (StringUtils.isBlank(nombre)) {
         	Log.log("osm sin nombre " + osm.getId());
             return false;

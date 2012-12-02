@@ -29,20 +29,20 @@ public class Node extends Entity{
     public double getLat() {
         return lat;
     }
-    public void setLat(double lat) {
+    public void setLat(final double lat) {
         this.lat = lat;
         setModified(true);
     }
     public double getLon() {
         return lon;
     }
-    public void setLon(double lon) {
+    public void setLon(final double lon) {
         this.lon = lon;
         setModified(true);
     }
     
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
     	return super.equals(obj);
     }
     @Override

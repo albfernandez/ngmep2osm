@@ -31,17 +31,17 @@ import ngmep.osm.datamodel.RelationMember;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class RelationDAO extends AbstractEntityDAO{
+public final class RelationDAO extends AbstractEntityDAO{
     public static final String QUERY_BASE = 
         "select id, version, user_id, tstamp, changeset_id from relations r ";
     public static final String QUERY_RELATION = 
         QUERY_BASE + " where id=?";   
-    public static final String QUERY_RELATION_TAGS_A =
+    public static final String RELATION_TAGS_A =
         "select relation_id, k, v from relation_tags where relation_id = ?";
-    public static final String QUERY_RELATION_TAGS =
+    public static final String RELATION_TAGS =
         "select id relation_id, (each(tags)).key k, (each(tags)).value v from relations where id = ?";
     
-    public static final String QUERY_RELATION_MEMBERS = 
+    public static final String RELATION_MEMBERS = 
         "SELECT relation_id, member_id, member_type, member_role, sequence_id " + 
     		"  FROM relation_members where relation_id = ? order by sequence_id";
     
@@ -51,30 +51,30 @@ public class RelationDAO extends AbstractEntityDAO{
         return instance;
     }
     
-	public Relation getRelation(long id) throws SQLException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+	public Relation getRelation(final long relationId) throws SQLException {
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		Relation relation = null;
 		try {
-			ps = Database.getConnection().prepareStatement(QUERY_RELATION);
-			ps.setLong(1, id);
-			rs = ps.executeQuery();
+			statement = Database.getConnection().prepareStatement(QUERY_RELATION);
+			statement.setLong(1, relationId);
+			resultSet = statement.executeQuery();
 
-			if (rs.next()) {
-				relation = getRelation(rs);
+			if (resultSet.next()) {
+				relation = getRelation(resultSet);
 			}
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps != null) {
+			if (statement != null) {
 				try {
-					ps.close();
+					statement.close();
 				}
 				catch (Exception e){
 					// Ignore
@@ -84,7 +84,7 @@ public class RelationDAO extends AbstractEntityDAO{
 		}
 		return relation;
 	}
-    public List<Relation> getRelationsByTag (String tagName, String value) throws SQLException {
+    public List<Relation> getRelationsByTag (final String tagName, final String value) throws SQLException {
         
         
         String query = QUERY_BASE;
@@ -102,29 +102,29 @@ public class RelationDAO extends AbstractEntityDAO{
         
 
         
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		List<Relation> resultado = null;
 		try {
-			ps = Database.getConnection().prepareStatement(query);
-			ps.setString(1, tagName);
+			statement = Database.getConnection().prepareStatement(query);
+			statement.setString(1, tagName);
 			if (!StringUtils.isBlank(value)) {
-				ps.setString(2, value);
+				statement.setString(2, value);
 			}
-			rs = ps.executeQuery();
-			resultado = getRelations(rs);
+			resultSet = statement.executeQuery();
+			resultado = getRelations(resultSet);
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps != null) {
+			if (statement != null) {
 				try {
-					ps.close();
+					statement.close();
 				}
 				catch (Exception e) {
 					// Ignore
@@ -136,42 +136,42 @@ public class RelationDAO extends AbstractEntityDAO{
         
     }
     
-    public List<Relation> getRelations(ResultSet rs) throws SQLException {
-        List<Relation> lista = new ArrayList<Relation>();
-        while (rs.next()) {
-            lista.add(getRelation(rs));
+    public List<Relation> getRelations(final ResultSet resultSet) throws SQLException {
+        final List<Relation> lista = new ArrayList<Relation>();
+        while (resultSet.next()) {
+            lista.add(getRelation(resultSet));
         }
         return lista;
     }
-    public Relation getRelation(ResultSet rs) throws SQLException {
-        Relation relation = new Relation();
-        relation.setId(rs.getLong("id"));
-        relation.setUser(UserDAO.getInstance().getUser(rs.getInt("user_id")));
-        relation.setVersion(rs.getInt("version"));
-        Calendar calendario = new GregorianCalendar();
-        relation.setTimestamp(rs.getTimestamp("tstamp", calendario).getTime());
-        relation.setChangeset(rs.getLong("changeset_id"));
+    public Relation getRelation(final ResultSet resultSet) throws SQLException {
+        final Relation relation = new Relation();
+        relation.setId(resultSet.getLong("id"));
+        relation.setUser(UserDAO.getInstance().getUser(resultSet.getInt("user_id")));
+        relation.setVersion(resultSet.getInt("version"));
+        final Calendar calendario = new GregorianCalendar();
+        relation.setTimestamp(resultSet.getTimestamp("tstamp", calendario).getTime());
+        relation.setChangeset(resultSet.getLong("changeset_id"));
         
-		PreparedStatement ps2 = null;
-		ResultSet rs2 = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet2 = null;
 		try {
-			ps2 = Database.getConnection().prepareStatement(
+			statement = Database.getConnection().prepareStatement(
 					getQueryRelationTags());
-			ps2.setLong(1, relation.getId());
-			rs2 = ps2.executeQuery();
-			initTags(relation, rs2);
+			statement.setLong(1, relation.getId());
+			resultSet2 = statement.executeQuery();
+			initTags(relation, resultSet2);
 		} finally {
-			if (rs2 != null) {
+			if (resultSet2 != null) {
 				try {
-					rs2.close();
+					resultSet2.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps2 != null) {
+			if (statement != null) {
 				try {
-					ps2.close();
+					statement.close();
 				}
 				catch (Exception e) {
 					// Ignore
@@ -183,20 +183,20 @@ public class RelationDAO extends AbstractEntityDAO{
         relation.setModified(false);
         return relation;
     }
-    public void loadMembers(Relation relation) throws SQLException {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+    public void loadMembers(final Relation relation) throws SQLException {
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		try {
-			ps = Database.getConnection().prepareStatement(
-					QUERY_RELATION_MEMBERS);
-			ps.setLong(1, relation.getId());
-			rs = ps.executeQuery();
-			while (rs.next()) {
+			statement = Database.getConnection().prepareStatement(
+					RELATION_MEMBERS);
+			statement.setLong(1, relation.getId());
+			resultSet = statement.executeQuery();
+			while (resultSet.next()) {
 
-				String tipo = rs.getString("member_type");
-				String role = rs.getString("member_role");
-				long memberId = rs.getLong("member_id");
-				RelationMember member = new RelationMember();
+				final String tipo = resultSet.getString("member_type");
+				final String role = resultSet.getString("member_role");
+				final long memberId = resultSet.getLong("member_id");
+				final RelationMember member = new RelationMember();
 				member.setRole(role);
 				if ("N".equals(tipo)) {
 					member.setEntity(NodeDAO.getInstance().getNode(memberId));
@@ -210,17 +210,17 @@ public class RelationDAO extends AbstractEntityDAO{
 
 			}
 		} finally {
-			if (rs != null) {
+			if (resultSet != null) {
 				try {
-					rs.close();
+					resultSet.close();
 				}
 				catch (Exception e) {
 					// Ignore
 				}
 			}
-			if (ps != null) {
+			if (statement != null) {
 				try {
-					ps.close();
+					statement.close();
 				}
 				catch (Exception e) {
 					// Ignore
@@ -230,9 +230,9 @@ public class RelationDAO extends AbstractEntityDAO{
     }
     private String getQueryRelationTags() {
         if (Database.isSimpleSchema()){
-            return QUERY_RELATION_TAGS_A;
+            return RELATION_TAGS_A;
         }
-        return QUERY_RELATION_TAGS;
+        return RELATION_TAGS;
 
     }
     

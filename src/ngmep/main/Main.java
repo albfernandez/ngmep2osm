@@ -25,7 +25,7 @@ import ngmep.osm.log.Log;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-public class Main {
+public final class Main {
 
 	private Main() {
 		// No instances of this class are allowed
@@ -36,7 +36,7 @@ public class Main {
      * @throws ClassNotFoundException 
      * @throws SQLException 
      */
-    public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
+    public static void main(final String[] args) throws SQLException, ClassNotFoundException, IOException {
     	boolean objetivo2 = true;
     	boolean objetivo3 = true;
     	boolean objetivo4 = true;
@@ -57,7 +57,7 @@ public class Main {
     		}
     	}
     	
-        StopWatch cronometro = new StopWatch();
+        final StopWatch cronometro = new StopWatch();
         cronometro.start();
         if (objetivo2) {
         	ngmep.procesos.BuscaAsignaIds.buscaOsmId();

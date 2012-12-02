@@ -21,20 +21,20 @@ package ngmep.osm.datamodel;
 
 public class User {
 
-    private int id;
+    private int id; //NOPMD
     private String name;
     
     
     public int getId() {
         return id;
     }
-    public void setId(int id) {
-        this.id = id;
+    public void setId(final int identifier) {
+        this.id = identifier;
     }
     public String getName() {
         return name;
     }
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
     

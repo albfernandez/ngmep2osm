@@ -22,7 +22,7 @@ public class Entidad {
     private String codine;
     private String codineMun;
     private String nombreMun;
-    private int administrativeLevel;
+    private int administrativeLevel; // NOPMD
     private String name;
     private double altura;
     private String sourceAltura;
@@ -48,14 +48,14 @@ public class Entidad {
     private String decisionNombre;
     
     public Entidad (){
-        
+        super();
     }
 
     public String getCodine() {
         return codine;
     }
 
-    public void setCodine(String codine) {
+    public void setCodine(final String codine) {
         this.codine = codine;
     }
 
@@ -63,7 +63,7 @@ public class Entidad {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -71,7 +71,7 @@ public class Entidad {
         return altura;
     }
 
-    public void setAltura(double altura) {
+    public void setAltura(final double altura) {
         this.altura = altura;
     }
 
@@ -79,7 +79,7 @@ public class Entidad {
         return sourceAltura;
     }
 
-    public void setSourceAltura(String sourceAltura) {
+    public void setSourceAltura(final String sourceAltura) {
         this.sourceAltura = sourceAltura;
     }
 
@@ -87,7 +87,7 @@ public class Entidad {
         return lon;
     }
 
-    public void setLon(double lon) {
+    public void setLon(final double lon) {
         this.lon = lon;
     }
 
@@ -95,7 +95,7 @@ public class Entidad {
         return lat;
     }
 
-    public void setLat(double lat) {
+    public void setLat(final double lat) {
         this.lat = lat;
     }
 
@@ -103,7 +103,7 @@ public class Entidad {
         return osmid;
     }
 
-    public void setOsmid(long osmid) {
+    public void setOsmid(final long osmid) {
         this.osmid = osmid;
     }
 
@@ -111,7 +111,7 @@ public class Entidad {
         return poblacion;
     }
 
-    public void setPoblacion(double poblacion) {
+    public void setPoblacion(final double poblacion) {
         this.poblacion = poblacion;
     }
 
@@ -119,7 +119,7 @@ public class Entidad {
         return place;
     }
 
-    public void setPlace(String place) {
+    public void setPlace(final String place) {
         this.place = place;
     }
 
@@ -127,7 +127,7 @@ public class Entidad {
         return codigoProvincia;
     }
 
-    public void setCodigoProvincia(String codigoProvincia) {
+    public void setCodigoProvincia(final String codigoProvincia) {
         this.codigoProvincia = codigoProvincia;
     }
 
@@ -135,7 +135,7 @@ public class Entidad {
         return nombreOficial;
     }
 
-    public void setNombreOficial(String nombreOficial) {
+    public void setNombreOficial(final String nombreOficial) {
         this.nombreOficial = nombreOficial;
     }
 
@@ -143,7 +143,7 @@ public class Entidad {
         return nombreAlternativo;
     }
 
-    public void setNombreAlternativo(String nombreAlternativo) {
+    public void setNombreAlternativo(final String nombreAlternativo) {
         this.nombreAlternativo = nombreAlternativo;
     }
 
@@ -151,7 +151,7 @@ public class Entidad {
         return nombreAntiguo;
     }
 
-    public void setNombreAntiguo(String nombreAntiguo) {
+    public void setNombreAntiguo(final String nombreAntiguo) {
         this.nombreAntiguo = nombreAntiguo;
     }
 
@@ -159,7 +159,7 @@ public class Entidad {
         return name1;
     }
 
-    public void setName1(String name1) {
+    public void setName1(final String name1) {
         this.name1 = name1;
     }
 
@@ -167,7 +167,7 @@ public class Entidad {
         return name2;
     }
 
-    public void setName2(String name2) {
+    public void setName2(final String name2) {
         this.name2 = name2;
     }
 
@@ -175,7 +175,7 @@ public class Entidad {
         return lan1;
     }
 
-    public void setLan1(String lan1) {
+    public void setLan1(final String lan1) {
         this.lan1 = lan1;
     }
 
@@ -183,7 +183,7 @@ public class Entidad {
         return lan2;
     }
 
-    public void setLan2(String lan2) {
+    public void setLan2(final String lan2) {
         this.lan2 = lan2;
     }
 
@@ -191,7 +191,7 @@ public class Entidad {
         return fechaCambioNombre;
     }
 
-    public void setFechaCambioNombre(String fechaCambioNombre) {
+    public void setFechaCambioNombre(final String fechaCambioNombre) {
         this.fechaCambioNombre = fechaCambioNombre;
     }
 
@@ -199,7 +199,7 @@ public class Entidad {
         return decreto;
     }
 
-    public void setDecreto(String decreto) {
+    public void setDecreto(final String decreto) {
         this.decreto = decreto;
     }
 
@@ -207,7 +207,7 @@ public class Entidad {
         return locName;
     }
 
-    public void setLocName(String locName) {
+    public void setLocName(final String locName) {
         this.locName = locName;
     }
 
@@ -215,7 +215,7 @@ public class Entidad {
         return codineMun;
     }
 
-    public void setCodineMun(String codineMun) {
+    public void setCodineMun(final String codineMun) {
         this.codineMun = codineMun;
     }
 
@@ -223,7 +223,7 @@ public class Entidad {
         return nombreMun;
     }
 
-    public void setNombreMun(String nombreMun) {
+    public void setNombreMun(final String nombreMun) {
         this.nombreMun = nombreMun;
     }
 
@@ -231,15 +231,15 @@ public class Entidad {
         return administrativeLevel;
     }
 
-    public void setAdministrativeLevel(int administrativeLevel) {
-        this.administrativeLevel = administrativeLevel;
+    public void setAdministrativeLevel(final int adminLevel) {
+        this.administrativeLevel = adminLevel;
     }
 
     public double getPoblacionMuni() {
         return poblacionMuni;
     }
 
-    public void setPoblacionMuni(double poblacionMuni) {
+    public void setPoblacionMuni(final double poblacionMuni) {
         this.poblacionMuni = poblacionMuni;
     }
 
@@ -247,7 +247,7 @@ public class Entidad {
         return estadoManual;
     }
 
-    public void setEstadoManual(int estadoManual) {
+    public void setEstadoManual(final int estadoManual) {
         this.estadoManual = estadoManual;
     }
 
@@ -255,7 +255,7 @@ public class Entidad {
         return estadoRobot;
     }
 
-    public void setEstadoRobot(int estadoRobot) {
+    public void setEstadoRobot(final int estadoRobot) {
         this.estadoRobot = estadoRobot;
     }
 
@@ -263,7 +263,7 @@ public class Entidad {
         return decisionNombre;
     }
 
-    public void setDecisionNombre(String decisionNombre) {
+    public void setDecisionNombre(final String decisionNombre) {
         this.decisionNombre = decisionNombre;
     }
     
