@@ -122,7 +122,7 @@ public class NodeDAO extends AbstractEntityDAO {
 		ResultSet rs2 = null;
 		try {
 			ps2 = Database.getConnection().prepareStatement(
-					get_QUERY_NODE_TAGS());
+					getQueryNodeTags());
 			ps2.setLong(1, id);
 			rs2 = ps2.executeQuery();
 			initTags(node, rs2);
@@ -267,7 +267,7 @@ public class NodeDAO extends AbstractEntityDAO {
     
     
 
-    private String get_QUERY_NODE_TAGS() {
+    private String getQueryNodeTags() {
         if (Database.isSimpleSchema()){
             return QUERY_NODE_TAGS_A;
         }

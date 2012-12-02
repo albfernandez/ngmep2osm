@@ -156,7 +156,7 @@ public class RelationDAO extends AbstractEntityDAO{
 		ResultSet rs2 = null;
 		try {
 			ps2 = Database.getConnection().prepareStatement(
-					get_QUERY_RELATION_TAGS());
+					getQueryRelationTags());
 			ps2.setLong(1, relation.getId());
 			rs2 = ps2.executeQuery();
 			initTags(relation, rs2);
@@ -228,7 +228,7 @@ public class RelationDAO extends AbstractEntityDAO{
 			}
 		}
     }
-    private String get_QUERY_RELATION_TAGS() {
+    private String getQueryRelationTags() {
         if (Database.isSimpleSchema()){
             return QUERY_RELATION_TAGS_A;
         }

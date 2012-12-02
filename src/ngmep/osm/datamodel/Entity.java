@@ -29,7 +29,7 @@ public class Entity {
     private int version;
     private long changeset;
     private long timestamp;
-    private Map<String, String> tags = new HashMap<String, String>();
+    private final Map<String, String> tags = new HashMap<String, String>();
     private boolean modified = false;
     
     protected Entity(){

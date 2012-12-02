@@ -45,6 +45,10 @@ public class BuscaAsignaIds {
 
     private static int contador = -1;
 
+    private BuscaAsignaIds() {
+    	// No instances
+    }
+
     public static void buscaOsmId () throws SQLException, ClassNotFoundException, IOException{
         String query  = EntidadDAO.QUERY_BASE + " where osmid is  null and estado_robot = 0 and estado_manual = 0  " ;
 

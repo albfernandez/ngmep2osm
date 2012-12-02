@@ -40,6 +40,10 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 public class XMLExporter {
     
+	private XMLExporter () {
+		// No instances
+	}
+	
     public static void export (Entity entity, OutputStream os) throws IOException {
         List<Entity> lista = new ArrayList<Entity>();
         lista.add(entity);
@@ -53,12 +57,12 @@ public class XMLExporter {
         writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
         writer.write("<osm version='0.6' generator='JOSM'>\n");
         for (Entity entity: list) {
-            _export(entity, writer, force);
+            internalExport(entity, writer, force);
         }        
         writer.write("</osm>\n");       
         writer.close();
     }
-    private static void _export (Entity entity, BufferedWriter writer, boolean force)throws IOException{
+    private static void internalExport (Entity entity, BufferedWriter writer, boolean force)throws IOException{
         if (entity instanceof Node){
             exportNode((Node)entity, writer,force);
         }
@@ -74,7 +78,7 @@ public class XMLExporter {
             return;
         }
         for (RelationMember member: relation.getMembers()){
-            _export (member.getEntity(), writer, true);
+            internalExport (member.getEntity(), writer, true);
         }
         StringBuilder sb = new StringBuilder();
         sb.append("<relation");

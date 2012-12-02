@@ -25,7 +25,7 @@ import java.util.List;
 
 public class Relation extends Entity{
 
-    private List<RelationMember> members = new ArrayList<RelationMember>();
+    private final List<RelationMember> members = new ArrayList<RelationMember>();
     public Relation () {
         super();
     }

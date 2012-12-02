@@ -27,6 +27,9 @@ import org.apache.commons.lang3.time.StopWatch;
 
 public class Main {
 
+	private Main() {
+		// No instances of this class are allowed
+	}
     /**
      * @param args
      * @throws IOException 

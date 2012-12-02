@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Way extends Entity{
-    private List<Node> nodos = new ArrayList<Node>();
+    private final List<Node> nodos = new ArrayList<Node>();
     public Way(){
         super();
     }

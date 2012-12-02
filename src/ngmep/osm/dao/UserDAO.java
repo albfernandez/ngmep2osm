@@ -28,7 +28,7 @@ import ngmep.osm.datamodel.User;
 
 public class UserDAO {
     
-    private Map<Integer, User> cache = new HashMap<Integer, User>();
+    private final Map<Integer, User> cache = new HashMap<Integer, User>();
 
     private static UserDAO instance = new UserDAO();
     

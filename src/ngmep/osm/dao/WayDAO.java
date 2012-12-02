@@ -91,7 +91,7 @@ public class WayDAO extends AbstractEntityDAO{
         PreparedStatement ps2 = null;
         ResultSet rs2 = null;
         try {
-	        ps2 = Database.getConnection().prepareStatement(get_QUERY_WAY_TAGS());
+	        ps2 = Database.getConnection().prepareStatement(getQueryWayTags());
 	        ps2.setLong(1,id);
 	        rs2 = ps2.executeQuery();
 	        initTags(way, rs2);
@@ -118,7 +118,7 @@ public class WayDAO extends AbstractEntityDAO{
         way.setModified(false);
         return way;
     } 
-    private String get_QUERY_WAY_TAGS() {
+    private String getQueryWayTags() {
         if (Database.isSimpleSchema()){
             return QUERY_WAY_TAGS_A;
         }

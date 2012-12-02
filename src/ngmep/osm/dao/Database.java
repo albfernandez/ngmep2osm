@@ -35,7 +35,10 @@ public class Database {
     private static Connection connection;
     private static boolean simpleSchema = false;
     
-    public static Connection getConnection () throws   SQLException {
+    private Database() {
+		// No instances of this class are allowed
+	}
+    public static synchronized Connection getConnection () throws   SQLException {
         if (connection == null){
             try {
             Properties config = Config.getInstance().getDatabaseCredentials();
@@ -60,15 +63,27 @@ public class Database {
     }
     
     private static void checkSimpleSchema(Connection connection) {
-    	DatabaseMetaData md;
+    	DatabaseMetaData md = null;
+    	ResultSet rs = null;
 		try {
 			md = connection.getMetaData();
-			ResultSet rs = md.getTables(null, null, "node_tags", null);
+			rs = md.getTables(null, null, "node_tags", null);
 	        simpleSchema = rs.next();
-	        rs.close();
-		} catch (SQLException e) {
+	        
+		}		
+		catch (SQLException e) {
 			e.printStackTrace();
-		}        
+		}
+		finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
+			}
+		}
     }
     public static boolean isSimpleSchema () {
     	return simpleSchema;

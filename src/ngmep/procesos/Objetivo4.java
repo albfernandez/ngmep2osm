@@ -49,6 +49,11 @@ public class Objetivo4 {
     public static final String ROLE_ADMIN_CENTRE = "admin_centre";
     
     
+    private Objetivo4(){
+    	// No instances
+    }
+    
+    
     public static void ejecutaObjetivo4 () throws SQLException, ClassNotFoundException, IOException{
         String query  =  EntidadDAO.QUERY_BASE + " where osmid is not  null and admin_level in (4,6,7,8) and estado_4 = 0 ";
         query = query + "and cod_prov in ('35', '38')";

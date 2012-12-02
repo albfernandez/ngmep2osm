@@ -50,6 +50,11 @@ public class Objetivo3 {
 	
 
     private static int iderror = 0;
+    
+    private Objetivo3(){
+    	//No instance
+    }
+    
     private static String doubleToString(double d){
         return Long.toString((long) d);
     }
@@ -303,7 +308,7 @@ public class Objetivo3 {
         if (osm == null || !esLocalidad(osm)){
             osm = WayDAO.getInstance().getWay(osmid);
             if (osm != null && !esLocalidad(osm)){
-                osm = null;
+                return null;
             }
         }
         return osm;
