@@ -34,17 +34,12 @@ public class Config extends Properties{
 	 * 
 	 */
 	private static final long serialVersionUID = -5287776933222886816L;
-	private static Config instance = null;
-	
-	public static Config getInstance(){
-		if (instance == null) {
-			instance = new Config();
-		}
-		return instance;
-	}
-	
+	private static Config instance =  new Config();
 	private String fecha="";
 	
+	public static Config getInstance(){
+		return instance;
+	}	
 	private Config(){
 		this (new File(System.getProperty("user.home") + File.separator + ".osm"+ File.separator + "ngmep2osm.cfg"));
 	}
@@ -122,6 +117,10 @@ public class Config extends Properties{
 	@Override
 	public synchronized boolean equals(Object o) {	
 		return super.equals(o);
+	}
+	@Override
+	public synchronized int hashCode() {
+		return super.hashCode();
 	}
 
 }

@@ -65,10 +65,21 @@ public class RelationDAO extends AbstractEntityDAO{
 			}
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps != null) {
-				ps.close();
+				try {
+					ps.close();
+				}
+				catch (Exception e){
+					// Ignore
+				}
+				
 			}
 		}
 		return relation;
@@ -93,7 +104,7 @@ public class RelationDAO extends AbstractEntityDAO{
         
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		List<Relation> resultado = new ArrayList<Relation>();
+		List<Relation> resultado = null;
 		try {
 			ps = Database.getConnection().prepareStatement(query);
 			ps.setString(1, tagName);
@@ -104,10 +115,20 @@ public class RelationDAO extends AbstractEntityDAO{
 			resultado = getRelations(rs);
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps != null) {
-				ps.close();
+				try {
+					ps.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 		}
      
@@ -141,10 +162,20 @@ public class RelationDAO extends AbstractEntityDAO{
 			initTags(relation, rs2);
 		} finally {
 			if (rs2 != null) {
-				rs2.close();
+				try {
+					rs2.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps2 != null) {
-				ps2.close();
+				try {
+					ps2.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 		}
         
@@ -180,10 +211,20 @@ public class RelationDAO extends AbstractEntityDAO{
 			}
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps != null) {
-				ps.close();
+				try {
+					ps.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 		}
     }

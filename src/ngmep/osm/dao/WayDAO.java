@@ -59,10 +59,20 @@ public class WayDAO extends AbstractEntityDAO{
 			}
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps != null) {
-				ps.close();
+				try {
+					ps.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 		}
      
@@ -78,12 +88,32 @@ public class WayDAO extends AbstractEntityDAO{
         way.setTimestamp(rs.getTimestamp("tstamp", calendario).getTime());
         way.setChangeset(rs.getLong("changeset_id"));
 
-        PreparedStatement ps2 = Database.getConnection().prepareStatement(get_QUERY_WAY_TAGS());
-        ps2.setLong(1,id);
-        ResultSet rs2 = ps2.executeQuery();
-        initTags(way, rs2);
-        rs2.close();
-        ps2.close();
+        PreparedStatement ps2 = null;
+        ResultSet rs2 = null;
+        try {
+	        ps2 = Database.getConnection().prepareStatement(get_QUERY_WAY_TAGS());
+	        ps2.setLong(1,id);
+	        rs2 = ps2.executeQuery();
+	        initTags(way, rs2);
+        }
+        finally {
+        	if (rs2 != null) {
+        		try {
+        			rs2.close();
+        		}
+        		catch (Exception e) {
+        			// Ignore
+        		}
+        	}
+        	if (ps2 != null) {
+        		try {
+        			ps2.close();
+        		}
+        		catch (Exception e) {
+        			// Ignore
+        		}
+        	}
+        }
         loadPoints(way);
         way.setModified(false);
         return way;
@@ -118,10 +148,20 @@ public class WayDAO extends AbstractEntityDAO{
 			}
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps != null) {
-				ps.close();
+				try {
+					ps.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 		}
 		for (long id : idNodos) {

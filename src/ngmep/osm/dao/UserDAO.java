@@ -47,17 +47,39 @@ public class UserDAO {
         return cache.get(id);
     }
     public User getUserFromBD(int id) throws SQLException{
-        PreparedStatement ps = Database.getConnection().prepareStatement(QUERY);
-        ps.setInt(1, id);
-        ResultSet rs  = ps.executeQuery();
-        User user = null;
-        if (rs.next()){
-            user = new User();
-            user.setId(id);
-            user.setName(rs.getString("name"));
-        }
-        rs.close();
-        ps.close();
+    	PreparedStatement ps = null;
+    	ResultSet rs = null;
+    	User user = null;
+    	try {
+	        ps = Database.getConnection().prepareStatement(QUERY);
+	        ps.setInt(1, id);
+	        rs  = ps.executeQuery();
+	       
+	        if (rs.next()){
+	            user = new User();
+	            user.setId(id);
+	            user.setName(rs.getString("name"));
+	        }
+    	}
+    	finally {
+    		if (rs != null) {
+    			try {
+    				rs.close();
+    			}
+    			catch (Exception e) {
+    				// Ignore
+    			}
+    		}
+    		if (ps != null) {
+    			try {
+    				ps.close();
+    			}
+    			catch (Exception e ) {
+    				// Ignore
+    			}
+    		}
+    			
+    	}
         return user;
     }
 }

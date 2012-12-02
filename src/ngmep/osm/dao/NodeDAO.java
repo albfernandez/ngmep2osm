@@ -66,7 +66,7 @@ public class NodeDAO extends AbstractEntityDAO {
 		query += ")";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		List<Node> resultado = new ArrayList<Node>();
+		List<Node> resultado = null;
 		try {
 			ps = Database.getConnection().prepareStatement(query);
 			ps.setString(1, tagName);
@@ -77,10 +77,20 @@ public class NodeDAO extends AbstractEntityDAO {
 			resultado = getNodes(rs);
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps != null) {
-				ps.close();
+				try {
+					ps.close();
+				}
+				catch (Exception e) {
+					// ignore
+				}
 			}
 		}
 
@@ -118,10 +128,20 @@ public class NodeDAO extends AbstractEntityDAO {
 			initTags(node, rs2);
 		} finally {
 			if (rs2 != null) {
-				rs2.close();
+				try {
+					rs2.close();
+				}
+				catch (Exception e){
+					// Ignore
+				}
 			}
 			if (ps2 != null) {
-				ps2.close();
+				try {
+					ps2.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}				
 			}
 		}
 		node.setModified(false);
@@ -142,7 +162,12 @@ public class NodeDAO extends AbstractEntityDAO {
 			}
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps != null) {
 				ps.close();
@@ -153,25 +178,27 @@ public class NodeDAO extends AbstractEntityDAO {
 	}
     
     public List<Node> getNode(double lon, double lat, double distance, String key, String[] values) throws SQLException {
-        String query = "select id, version, user_id, tstamp, changeset_id, st_x(geom) as lon, st_y(geom) as lat from nodes n ";
-        query += " where 1=1 and n.id > 0 ";
+        StringBuilder query = new StringBuilder(); 
+        
+        query.append("select id, version, user_id, tstamp, changeset_id, st_x(geom) as lon, st_y(geom) as lat from nodes n ");
+        query.append(" where 1=1 and n.id > 0 ");
         if (!StringUtils.isBlank(key)){
-            query += " and  exists (select 1 from node_tags t where t.node_id = n.id and t.k= ? ";
+            query.append(" and  exists (select 1 from node_tags t where t.node_id = n.id and t.k= ? ");
             if (values != null && values.length > 0){
-                query += " and t.v in ('___dummy'";
+                query.append(" and t.v in ('___dummy'");
                 for (int i = 0; i < values.length; i++){
-                    query += ", ? ";
+                    query.append(", ? ");
                 }
-                query+=")";
+                query.append(")");
             }
-            query += ")";
+            query.append(")");
         }
-        query += " and st_distance(st_setsrid(st_point(?,?),4326), geom) < ?";
+        query.append(" and st_distance(st_setsrid(st_point(?,?),4326), geom) < ?");
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<Node> lista = new ArrayList<Node>();
+        List<Node> lista = null;
 		try {
-			ps = Database.getConnection().prepareStatement(query);
+			ps = Database.getConnection().prepareStatement(query.toString());
 			int indice = 1;
 
 			if (!StringUtils.isBlank(key)) {
@@ -190,7 +217,12 @@ public class NodeDAO extends AbstractEntityDAO {
 			lista = getNodes(rs);
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e){
+					// Ignore
+				}
 			}
 			if (ps != null) {
 				ps.close();
@@ -207,7 +239,7 @@ public class NodeDAO extends AbstractEntityDAO {
     	
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		List<Node> lista = new ArrayList<Node>();
+		List<Node> lista = null;
 		try {
 			ps = Database.getConnection().prepareStatement(query);
 			ps.setDouble(1, lon);
@@ -218,7 +250,12 @@ public class NodeDAO extends AbstractEntityDAO {
 			lista = getNodes(rs);
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps != null) {
 				ps.close();
