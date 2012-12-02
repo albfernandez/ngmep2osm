@@ -119,5 +119,9 @@ public class Config extends Properties{
 	public String getLogFile() {
 		return getOutputDir() + File.separator + "log"+File.separator + "log_"+ fecha+ ".log";
 	}
+	@Override
+	public synchronized boolean equals(Object o) {	
+		return super.equals(o);
+	}
 
 }

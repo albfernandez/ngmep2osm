@@ -10,7 +10,7 @@ import ngmep.config.Config;
 public class Log {
 
 	public static void log(String mensaje) {
-		if (Config.getInstance().isLogConsola()){
+		if (Config.getInstance().isLogConsola() && System.out != null){
 			System.out.println(mensaje); //NOPMD
 		}
 		logToFile (mensaje);

@@ -53,6 +53,7 @@ public class EntidadDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		Entidad entidad = null;
+		
 		try {
 			ps = Database.getConnection().prepareStatement(QUERY_OSMID);
 			ps.setLong(1, osmid);
@@ -63,7 +64,12 @@ public class EntidadDAO {
 			}
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps != null) {
 				ps.close();
@@ -87,7 +93,12 @@ public class EntidadDAO {
 			}
 		} finally {
 			if (rs != null) {
-				rs.close();
+				try {
+					rs.close();
+				}
+				catch (Exception e) {
+					// Ignore
+				}
 			}
 			if (ps != null) {
 				ps.close();
