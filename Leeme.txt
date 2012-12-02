@@ -1,31 +1,12 @@
 
 
 
-
-CREATE TABLE poblaciones_osm (
-    id bigint NOT NULL,
-    version int NOT NULL,
-    user_id int NOT NULL,
-    tstamp timestamp without time zone NOT NULL,
-    changeset_id bigint NOT NULL
-);
-
-SELECT AddGeometryColumn('poblaciones_osm', 'geom', 4326, 'POINT', 2);
+Es necesario crear una tabla auxiliar y rellenarla para realizar los cruces necesarios.
+En esta tabla se copian de nodes todas las entidades que se corresponden con poblaciones, de forma que 
+el programa en las operaciones siguientes no necesita utilizar todo la base de datos, sino solo este conjunto de nodos.
 
 
-ALTER TABLE ONLY poblaciones_osm ADD CONSTRAINT pk_poblaciones_osm PRIMARY KEY (id);
+Scripts sql.
 
-CREATE INDEX idx_poblaciones_osm_geom ON poblaciones_osm USING gist (geom);
-
-
-
-DROP INDEX  idx_poblaciones_osm_geom;
-
-delete from poblaciones_osm;
-
-insert into poblaciones_osm(id, version, user_id, tstamp, changeset_id, geom)
-select id, version, user_id, tstamp, changeset_id, geom from nodes n
-where exists (select 1 from node_tags t where t.node_id = n.id and t.k = 'place' and t.v in ('city','town', 'village', 'hamlet', 'suburb','isolated_dwelling'));
-
-CREATE INDEX idx_poblaciones_osm_geom ON poblaciones_osm USING gist (geom);
-
+sql/create.sql -> para crear la tabla.
+sql/simple-01.sql -> borra los datos y los vuelve a rellenar, para el esquema simple
