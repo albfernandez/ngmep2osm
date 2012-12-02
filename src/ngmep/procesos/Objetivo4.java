@@ -102,7 +102,7 @@ public class Objetivo4 {
             }            
         }
         if (municipios.size() > 0){
-            String nombreArchivo = Config.getOsmOutputFile("objetivo4.subir");
+            String nombreArchivo = Config.getInstance().getOsmOutputFile("objetivo4.subir");
             OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
             XMLExporter.export(municipios, salida, false);
             salida.close();

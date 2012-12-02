@@ -10,3 +10,24 @@ Scripts sql.
 
 sql/create.sql -> para crear la tabla.
 sql/simple-01.sql -> borra los datos y los vuelve a rellenar, para el esquema simple
+
+
+Configuracion
+
+La aplicacion se configura mediante el archivo ~/.osm/ngmep2osm.cfg
+En este archivo se indican los siguientes valores:
+output.dir 
+	Directorio donde se generarán los archivos de la aplicación.
+database.config.file
+	Archivo donde se encuentran los datos de configuración de conexion a postgres.
+	tendrá las claves:host, database, user, password.
+	Se puden indicar esos 4 parametros en el archivo ngmep2osm.cfg, y no indicar  database.config.file
+logConsola
+	Indica si el programa generará salida por consola 
+
+
+
+Ejemplo
+output.dir=/home/ine/
+database.config.file=/home/osm/osmc.auth
+logConsola=true

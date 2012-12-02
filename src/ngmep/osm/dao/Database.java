@@ -38,7 +38,7 @@ public class Database {
     public static Connection getConnection () throws   SQLException {
         if (connection == null){
             try {
-            Properties config = Config.getConfigProperties();
+            Properties config = Config.getInstance().getDatabaseCredentials();
             
             String url = "jdbc:postgresql://" + config.getProperty("host") + "/" + config.getProperty("database");
             

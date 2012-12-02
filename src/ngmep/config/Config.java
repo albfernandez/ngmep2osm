@@ -28,37 +28,74 @@ import java.util.Properties;
 
 import ngmep.osm.log.Log;
 
-public class Config {
-    
-	private static String fecha="";
-	static {
-    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        fecha = sdf.format(new Date());
-        String home = System.getProperty("user.home");
-        File osm = new File(home + File.separator + "osm");
+public class Config extends Properties{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5287776933222886816L;
+	private static Config instance = null;
+	
+	public static Config getInstance(){
+		if (instance == null) {
+			instance = new Config();
+		}
+		return instance;
+	}
+	
+	private String fecha="";
+	
+	private Config(){
+		this (new File(System.getProperty("user.home") + File.separator + ".osm"+ File.separator + "ngmep2osm.cfg"));
+	}
+	private Config(File configFile)  {
+		if (configFile.exists() && configFile.canRead()){
+			loadConfigFile(configFile);
+		}
+		else {
+			loadDefaults();
+		}
+		init();
+	}
+	private void loadConfigFile(File configFile){		
+		try (FileInputStream fis = new FileInputStream(configFile)){
+			this.load(fis);
+		}
+		catch (IOException ioe) {
+			loadDefaults();
+		}
+		init();
+	}
+	private void loadDefaults(){
+		setProperty("output.dir", System.getProperty("user.home")+ File.separator + "osm" + File.separator + "ine"+ File.separator);
+		setProperty("database.config.file", getProperty("output.dir") + "osmc.auth");
+		
+	}
+	private void init(){
+        fecha =  new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());        
+        File osm = new File(getOutputDir());
         if (!osm.exists()){
-        	if (!osm.mkdir()){
+        	if (!osm.mkdirs()){
         		Log.log("Error creando el directorio:" + osm.getAbsolutePath());
         	}
         }
-        File ine = new File(osm, "ine");
-        if (!ine.exists()){
-        	if (!ine.mkdir()){
-        		Log.log("Error creando el directorio:" + ine.getAbsolutePath());
-        	}
-        }
-        File log = new File (ine, "log");
+        File log = new File (osm, "log");
         if (!log.exists()){
         	if (!log.mkdir()){
         		Log.log("Error creando el directorio:" + log.getAbsolutePath());
         	}
         }
-	}
-    public static Properties getConfigProperties () throws IOException{
+	}    
+
+
+    public Properties getDatabaseCredentials () throws IOException{
+    	if (this.containsKey("database")){
+    		return this;
+    	}
         Properties config = new Properties();
         FileInputStream fis = null;
         try {
-        	fis = new FileInputStream(getOsmDir() + "osmc.auth");
+        	fis = new FileInputStream(getProperty("database.config.file"));
         	config.load(fis);
         }
         finally {       
@@ -68,11 +105,19 @@ public class Config {
         }
         return config;
     }
-    public static String getOsmDir () {
-        return System.getProperty("user.home")+ File.separator + "osm" + File.separator;
+    public boolean isLogConsola() {
+    	return Boolean.parseBoolean(getProperty("logConsola"));
+    }    
+    
+    public String getOutputDir() {
+    	return getProperty("output.dir");
+    }    
+    
+    public String getOsmOutputFile (String baseName) {
+    	return getOutputDir() +  File.separator + baseName + "."+ fecha + ".osm.gz";
     }
-    public static String getOsmOutputFile (String baseName) {
-    	return getOsmDir() + "ine" + File.separator + baseName + "."+ fecha + ".osm.gz";
-    }
+	public String getLogFile() {
+		return getOutputDir() + File.separator + "log"+File.separator + "log_"+ fecha+ ".log";
+	}
 
 }
