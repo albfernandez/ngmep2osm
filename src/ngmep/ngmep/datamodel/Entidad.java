@@ -18,7 +18,7 @@ package ngmep.ngmep.datamodel;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-public class Entidad {
+public class Entidad { //NOPMD
     private String codine;
     private String codineMun;
     private String nombreMun;
