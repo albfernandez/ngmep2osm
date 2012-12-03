@@ -38,26 +38,10 @@ public final class Main {
      * @throws SQLException 
      */
     public static void main(final String[] args) throws SQLException, ClassNotFoundException, IOException {
-    	boolean objetivo2 = true;
-    	boolean objetivo3 = true;
-    	boolean objetivo4 = true;
-    	if (args.length > 0){
-    		objetivo2 = false;
-    		objetivo3 = false;
-    		objetivo4 = false;
-    		for (String argumento: args){
-    			if ("2".equals(argumento)){
-    				objetivo2 = true;
-    			}
-    			if ("3".equals(argumento)){
-    				objetivo3 = true;
-    			}
-    			if ("4".equals(argumento)){
-    				objetivo4 = true;
-    			}
-    		}
-    	}
-    	
+    	final boolean objetivo2 = isProcessEnabled(args, "2");
+    	final boolean objetivo3 = isProcessEnabled(args, "3");
+    	final boolean objetivo4 = isProcessEnabled(args, "4");
+
         final StopWatch cronometro = new StopWatch();
         cronometro.start();
         if (objetivo2) {
@@ -74,6 +58,19 @@ public final class Main {
         cronometro.stop();
         Log.log("Tiempo empleado:" + cronometro);
 
+    }
+    private static boolean isProcessEnabled(final String[] args, final String testValue) {
+    	if (args == null || args.length == 0) {
+    		return true;    		
+    	}
+    	else {    		
+    		for (String argument: args) {
+    			if (testValue.equals(argument)){
+    				return true;
+    			}
+    		}	
+    	}
+    	return false;
     }
 }
 
