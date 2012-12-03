@@ -22,7 +22,7 @@ public class Entidad {
     private String codine;
     private String codineMun;
     private String nombreMun;
-    private int administrativeLevel; // NOPMD
+    private int administrativeLevel; //NOPMD
     private String name;
     private double altura;
     private String sourceAltura;

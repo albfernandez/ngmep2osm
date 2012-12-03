@@ -196,5 +196,6 @@ public final class ComparaCadenas {
             return true;
         }
         return false;
-    }
+    }    
+
 }

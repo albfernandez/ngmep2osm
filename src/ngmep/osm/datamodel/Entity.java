@@ -24,14 +24,14 @@ import java.util.Set;
 
 public class Entity {
 
-    private long id; // NOPMD
+    private long id; //NOPMD
     private User user;
     private int version;
     private long changeset;
     private long timestamp;
     private final transient Map<String, String> tags = new HashMap<String, String>();
     private boolean modified = false;
-    private static final int prime = 31;
+    private static final int PRIME = 31;
     protected Entity(){
         super();
     }
@@ -125,7 +125,7 @@ public class Entity {
     public int hashCode() {
 
         int result = 1;
-        result = prime * result + (int) (id ^ (id >>> 32));
+        result = PRIME * result + (int) (id ^ (id >>> 32));
         return result;
     }
 
