@@ -88,16 +88,9 @@ public class Config extends Properties{
     		return this;
     	}
         Properties config = new Properties();
-        FileInputStream fis = null;
-        try {
-        	fis = new FileInputStream(getProperty("database.config.file"));
+        try (FileInputStream fis = new FileInputStream(getProperty("database.config.file"));) {
         	config.load(fis);
-        }
-        finally {       
-        	if (fis != null) {
-        		fis.close();
-        	}
-        }
+        }       
         return config;
     }
     public boolean isLogConsola() {

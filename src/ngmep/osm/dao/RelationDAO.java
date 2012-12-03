@@ -52,34 +52,13 @@ public final class RelationDAO extends AbstractEntityDAO{
     }
     
 	public Relation getRelation(final long relationId) throws SQLException {
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
 		Relation relation = null;
-		try {
-			statement = Database.getConnection().prepareStatement(QUERY_RELATION);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(QUERY_RELATION);){
 			statement.setLong(1, relationId);
-			resultSet = statement.executeQuery();
-
-			if (resultSet.next()) {
-				relation = getRelation(resultSet);
-			}
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
+			try (ResultSet resultSet = statement.executeQuery();){
+				if (resultSet.next()) {
+					relation = getRelation(resultSet);
 				}
-				catch (Exception e) {
-					// Ignore
-				}
-			}
-			if (statement != null) {
-				try {
-					statement.close();
-				}
-				catch (Exception e){
-					// Ignore
-				}
-				
 			}
 		}
 		return relation;
@@ -98,37 +77,15 @@ public final class RelationDAO extends AbstractEntityDAO{
         else {
             query += " where tags->? = ?";
         }
-        
-        
 
-        
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
 		List<Relation> resultado = null;
-		try {
-			statement = Database.getConnection().prepareStatement(query);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(query);){
 			statement.setString(1, tagName);
 			if (!StringUtils.isBlank(value)) {
 				statement.setString(2, value);
 			}
-			resultSet = statement.executeQuery();
-			resultado = getRelations(resultSet);
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}
-			}
-			if (statement != null) {
-				try {
-					statement.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}
+			try (ResultSet resultSet = statement.executeQuery();) {
+				resultado = getRelations(resultSet);
 			}
 		}
      
@@ -152,81 +109,42 @@ public final class RelationDAO extends AbstractEntityDAO{
         relation.setTimestamp(resultSet.getTimestamp("tstamp", calendario).getTime());
         relation.setChangeset(resultSet.getLong("changeset_id"));
         
-		PreparedStatement statement = null;
-		ResultSet resultSet2 = null;
-		try {
-			statement = Database.getConnection().prepareStatement(
-					getQueryRelationTags());
+
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(
+				getQueryRelationTags());){			
 			statement.setLong(1, relation.getId());
-			resultSet2 = statement.executeQuery();
-			initTags(relation, resultSet2);
-		} finally {
-			if (resultSet2 != null) {
-				try {
-					resultSet2.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}
+			try (ResultSet resultSet2 = statement.executeQuery();){
+				initTags(relation, resultSet2);
 			}
-			if (statement != null) {
-				try {
-					statement.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}
-			}
-		}
+		} 
         
         loadMembers(relation);
         relation.setModified(false);
         return relation;
     }
     public void loadMembers(final Relation relation) throws SQLException {
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
-		try {
-			statement = Database.getConnection().prepareStatement(
-					RELATION_MEMBERS);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(RELATION_MEMBERS);){			
 			statement.setLong(1, relation.getId());
-			resultSet = statement.executeQuery();
-			while (resultSet.next()) {
-
-				final String tipo = resultSet.getString("member_type");
-				final String role = resultSet.getString("member_role");
-				final long memberId = resultSet.getLong("member_id");
-				final RelationMember member = new RelationMember();
-				member.setRole(role);
-				if ("N".equals(tipo)) {
-					member.setEntity(NodeDAO.getInstance().getNode(memberId));
-				} else if ("W".equals(tipo)) {
-					member.setEntity(WayDAO.getInstance().getWay(memberId));
-				} else if ("R".equals(tipo)) {
-					member.setEntity(RelationDAO.getInstance().getRelation(
-							memberId));
-				}
-				relation.addMember(member);
-
-			}
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-				}
-				catch (Exception e) {
-					// Ignore
+			try (ResultSet resultSet = statement.executeQuery(); ){				
+				while (resultSet.next()) {
+	
+					final String tipo = resultSet.getString("member_type");
+					final String role = resultSet.getString("member_role");
+					final long memberId = resultSet.getLong("member_id");
+					final RelationMember member = new RelationMember();
+					member.setRole(role);
+					if ("N".equals(tipo)) {
+						member.setEntity(NodeDAO.getInstance().getNode(memberId));
+					} else if ("W".equals(tipo)) {
+						member.setEntity(WayDAO.getInstance().getWay(memberId));
+					} else if ("R".equals(tipo)) {
+						member.setEntity(RelationDAO.getInstance().getRelation(
+								memberId));
+					}
+					relation.addMember(member);	
 				}
 			}
-			if (statement != null) {
-				try {
-					statement.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}
-			}
-		}
+		} 
     }
     private String getQueryRelationTags() {
         if (Database.isSimpleSchema()){

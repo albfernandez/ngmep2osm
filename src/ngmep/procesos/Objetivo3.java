@@ -204,22 +204,12 @@ public final class Objetivo3 {
     
     public static void ejecutaObjetivo3 () throws SQLException, ClassNotFoundException, IOException{
         final String query  = EntidadDAO.QUERY_BASE + " where  estado_manual >= 0 and estado_robot = 0";
-        Statement statement = null;
-		ResultSet resultSet = null;
 		List<Entidad> entidades = null;
-		try {
-
-			statement = Database.getConnection().createStatement();
-			resultSet = statement.executeQuery(query);
+		try (Statement statement = Database.getConnection().createStatement();
+			ResultSet resultSet = statement.executeQuery(query);
+				){
 			entidades = EntidadDAO.getInstance().getListFromRs(resultSet);
-		} finally {
-			if (resultSet != null) {
-				try {resultSet.close();} catch (Exception e) {}
-			}
-			if (statement != null) {
-				statement.close();
-			}
-		}
+		} 
         final List<Entity> nodos = new ArrayList<Entity>();
         final List<Entity> errores = new ArrayList<Entity>();
         String error = "";
@@ -263,9 +253,9 @@ public final class Objetivo3 {
         
         if (!nodos.isEmpty()){
             final String nombreArchivo = Config.getInstance().getOsmOutputFile("objetivo3.subir");
-            final OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
-            XMLExporter.export(nodos, salida, false);
-            salida.close();
+            try (final OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo));){ 
+            	XMLExporter.export(nodos, salida, false);
+            }
             Log.log("Generado el archivo (" + nodos.size() + "):"+nombreArchivo);
         }
         else {
@@ -273,9 +263,9 @@ public final class Objetivo3 {
         }
         if (!errores.isEmpty()) {
             final String nombreArchivo = Config.getInstance().getOsmOutputFile("objetivo3.errores");
-            final OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
-            XMLExporter.export(errores, salida, true);
-            salida.close();
+            try (final OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo));){ 
+            	XMLExporter.export(errores, salida, true);
+            }
             Log.log("Generado el archivo(" + errores.size() + "):"+nombreArchivo);
         }
         
@@ -319,16 +309,10 @@ public final class Objetivo3 {
 
 	private static void marcarProcesado(final Entidad ine) throws SQLException {
 		String query = "update ngmep set estado_robot = 1 where cod_ine = ?";
-		PreparedStatement statement = null;
-		try {
-			statement = Database.getConnection().prepareStatement(query);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(query); ){			
 			statement.setString(1, ine.getCodine());
 			statement.executeUpdate();
-		} finally {
-			if (statement != null) {
-				statement.close();
-			}
-		}
+		} 
 	}
 
     private static void estableceNombresAlternativos (final Entity osm, final Entidad ine){

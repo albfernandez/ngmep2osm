@@ -54,14 +54,14 @@ public final class XMLExporter {
 
     public static void export (final List<Entity> list, final OutputStream output, final boolean force) throws IOException{
         
-        final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new BufferedOutputStream(output), "UTF-8"));
-        writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
-        writer.write("<osm version='0.6' generator='JOSM'>\n");
-        for (Entity entity: list) {
-            internalExport(entity, writer, force);
-        }        
-        writer.write("</osm>\n");       
-        writer.close();
+        try (final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new BufferedOutputStream(output), "UTF-8"));){
+	        writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
+	        writer.write("<osm version='0.6' generator='JOSM'>\n");
+	        for (Entity entity: list) {
+	            internalExport(entity, writer, force);
+	        }        
+	        writer.write("</osm>\n");
+        }
     }
     private static void internalExport (final Entity entity, final BufferedWriter writer, final boolean force)throws IOException{
         if (entity instanceof Node){

@@ -64,35 +64,16 @@ public final class NodeDAO extends AbstractEntityDAO {
 			query += " and t.v = ?";
 		}
 		query += ")";
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
 		List<Node> resultado = null;
-		try {
-			statement = Database.getConnection().prepareStatement(query);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(query);){
 			statement.setString(1, tagName);
 			if (!StringUtils.isBlank(value)) {
 				statement.setString(2, value);
 			}
-			resultSet = statement.executeQuery();
-			resultado = getNodes(resultSet);
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}
-			}
-			if (statement != null) {
-				try {
-					statement.close();
-				}
-				catch (Exception e) {
-					// ignore
-				}
-			}
-		}
+			try (ResultSet resultSet = statement.executeQuery();){
+				resultado = getNodes(resultSet);
+			}			
+		} 
 
 		return resultado;
 
@@ -117,63 +98,28 @@ public final class NodeDAO extends AbstractEntityDAO {
 		node.setChangeset(resultSet.getLong("changeset_id"));
 		node.setLat(resultSet.getDouble("lat"));
 		node.setLon(resultSet.getDouble("lon"));
-
-		PreparedStatement statement = null;
-		ResultSet resultSet2 = null;
-		try {
-			statement = Database.getConnection().prepareStatement(
-					getQueryNodeTags());
+				
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(
+				getQueryNodeTags());){			
 			statement.setLong(1, identifier);
-			resultSet2 = statement.executeQuery();
-			initTags(node, resultSet2);
-		} finally {
-			if (resultSet2 != null) {
-				try {
-					resultSet2.close();
-				}
-				catch (Exception e){
-					// Ignore
-				}
-			}
-			if (statement != null) {
-				try {
-					statement.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}				
+			try (ResultSet resultSet2 = statement.executeQuery();){
+				initTags(node, resultSet2);
 			}
 		}
 		node.setModified(false);
 		return node;
 	}
 
-	public Node getNode(final long nodeId) throws SQLException {
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
+	public Node getNode(final long nodeId) throws SQLException {		
 		Node node = null;
-		try {
-			statement = Database.getConnection().prepareStatement(QUERY_NODE);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(QUERY_NODE); ){			
 			statement.setLong(1, nodeId);
-			resultSet = statement.executeQuery();
-
-			if (resultSet.next()) {
-				node = getNode(resultSet);
-			}
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
+			try (ResultSet resultSet = statement.executeQuery();) {
+				if (resultSet.next()) {
+					node = getNode(resultSet);
 				}
-				catch (Exception e) {
-					// Ignore
-				}
-			}
-			if (statement != null) {
-				statement.close();
 			}
 		}
-
 		return node;
 	}
     
@@ -194,11 +140,11 @@ public final class NodeDAO extends AbstractEntityDAO {
             query.append(")");
         }
         query.append(" and st_distance(st_setsrid(st_point(?,?),4326), geom) < ?");
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
+        
+        
         List<Node> lista = null;
-		try {
-			statement = Database.getConnection().prepareStatement(query.toString());
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(query.toString());) {
+			
 			int indice = 1;
 
 			if (!StringUtils.isBlank(key)) {
@@ -212,56 +158,28 @@ public final class NodeDAO extends AbstractEntityDAO {
 			statement.setDouble(indice++, lon);
 			statement.setDouble(indice++, lat);
 			statement.setDouble(indice++, distance);
-			resultSet = statement.executeQuery();
-
-			lista = getNodes(resultSet);
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-				}
-				catch (Exception e){
-					// Ignore
-				}
+			try (ResultSet resultSet = statement.executeQuery();){
+				lista = getNodes(resultSet);
 			}
-			if (statement != null) {
-				statement.close();
-			}
-		}
-
+		} 
 		return lista;
 	}
     
     public List<Node> getPoblaciones(final double lon, final double lat, final double distance) throws SQLException {
-    	String query = "select id, version, user_id, tstamp, changeset_id, st_x(geom) as lon, st_y(geom) as lat from poblaciones_osm  ";
-    	query += " where 1=1 ";
-    	query += " and st_distance(st_setsrid(st_point(?,?),4326), geom) < ?";
+    	String query = "select id, version, user_id, tstamp, changeset_id, st_x(geom) as lon, st_y(geom) as lat from poblaciones_osm  "+
+    	" where 1=1 "+
+    	" and st_distance(st_setsrid(st_point(?,?),4326), geom) < ?";
     	
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
 		List<Node> lista = null;
-		try {
-			statement = Database.getConnection().prepareStatement(query);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(query);){
+			
 			statement.setDouble(1, lon);
 			statement.setDouble(2, lat);
 			statement.setDouble(3, distance);
-			resultSet = statement.executeQuery();
-
-			lista = getNodes(resultSet);
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}
-			}
-			if (statement != null) {
-				statement.close();
-			}
+			try (ResultSet resultSet = statement.executeQuery();){
+				lista = getNodes(resultSet);	
+			}			
 		}
-
 		return lista;
     }
     

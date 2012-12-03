@@ -50,60 +50,29 @@ public final class EntidadDAO {
     }
     
 	public Entidad getEntidadFromOsmId(final long osmid) throws SQLException {
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
 		Entidad entidad = null;
-		
-		try {
-			statement = Database.getConnection().prepareStatement(QUERY_OSMID);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(QUERY_OSMID);){			
 			statement.setLong(1, osmid);
-			resultSet = statement.executeQuery();
-
-			if (resultSet.next()) {
-				entidad = getEntidad(resultSet);
-			}
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-				}
-				catch (Exception e) {
-					// Ignore
+			
+			try (ResultSet resultSet = statement.executeQuery();){
+				if (resultSet.next()) {
+					entidad = getEntidad(resultSet);
 				}
 			}
-			if (statement != null) {
-				statement.close();
-			}
-		}
-
+		}			
 		return entidad;
 	}
 
 	public Entidad getEntidadFromCodIne(final String codIne) throws SQLException {
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
 		Entidad entidad = null;
-		try {
-			statement = Database.getConnection().prepareStatement(QUERY_INE);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(QUERY_INE);){			
 			statement.setString(1, codIne);
-			resultSet = statement.executeQuery();
-
-			if (resultSet.next()) {
-				entidad = getEntidad(resultSet);
-			}
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-				}
-				catch (Exception e) {
-					// Ignore
+			try (ResultSet resultSet = statement.executeQuery();){	
+				if (resultSet.next()) {
+					entidad = getEntidad(resultSet);
 				}
 			}
-			if (statement != null) {
-				statement.close();
-			}
-		}
+		} 
 
 		return entidad;
 	}
@@ -149,17 +118,11 @@ public final class EntidadDAO {
 		return lista;
 	}
     public void updateOsmId(final Entidad entidad) throws SQLException {
-		PreparedStatement statement = null;
-		try {
-			statement = Database.getConnection().prepareStatement(
-					"update ngmep set osmid=? where cod_ine = ?");
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(
+					"update ngmep set osmid=? where cod_ine = ?");) {			
 			statement.setLong(1, entidad.getOsmid());
 			statement.setString(2, entidad.getCodine());
 			statement.executeUpdate();
-		} finally {
-			if (statement != null) {
-				statement.close();
-			}
 		}
     }
 

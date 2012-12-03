@@ -47,34 +47,15 @@ public final class WayDAO extends AbstractEntityDAO{
         super();
     }
     public Way getWay(final long wayId) throws SQLException {
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
 		Way way = null;
-		try {
-			statement = Database.getConnection().prepareStatement(QUERY_WAY);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(QUERY_WAY);) {
 			statement.setLong(1, wayId);
-			resultSet = statement.executeQuery();
-			if (resultSet.next()) {
-				way = getWay(resultSet);
-			}
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-				}
-				catch (Exception e) {
-					// Ignore
+			try (ResultSet resultSet = statement.executeQuery();){
+				if (resultSet.next()) {
+					way = getWay(resultSet);
 				}
 			}
-			if (statement != null) {
-				try {
-					statement.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}
-			}
-		}
+		} 
      
         return way;
     }
@@ -88,32 +69,14 @@ public final class WayDAO extends AbstractEntityDAO{
         way.setTimestamp(resultSetWay.getTimestamp("tstamp", calendario).getTime());
         way.setChangeset(resultSetWay.getLong("changeset_id"));
 
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-	        statement = Database.getConnection().prepareStatement(getQueryWayTags());
+
+        try (PreparedStatement statement = Database.getConnection().prepareStatement(getQueryWayTags())){	        
 	        statement.setLong(1,wayId);
-	        resultSet = statement.executeQuery();
-	        initTags(way, resultSet);
+	        try (ResultSet resultSet =  statement.executeQuery();){
+	        	initTags(way, resultSet);
+	        }
         }
-        finally {
-        	if (resultSet != null) {
-        		try {
-        			resultSet.close();
-        		}
-        		catch (Exception e) {
-        			// Ignore
-        		}
-        	}
-        	if (statement != null) {
-        		try {
-        			statement.close();
-        		}
-        		catch (Exception e) {
-        			// Ignore
-        		}
-        	}
-        }
+        
         loadPoints(way);
         way.setModified(false);
         return way;
@@ -134,36 +97,16 @@ public final class WayDAO extends AbstractEntityDAO{
     }
 
 	private void loadPoints(final Way way) throws SQLException {
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
 		final List<Long> idNodos = new ArrayList<Long>();
 
-		try {
-			statement = Database.getConnection().prepareStatement(QUERY_WAY_NODES);
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(QUERY_WAY_NODES);){
 			statement.setLong(1, way.getId());
-			resultSet = statement.executeQuery();
-
-			while (resultSet.next()) {
-				idNodos.add(resultSet.getLong("node_id"));
-			}
-		} finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-				}
-				catch (Exception e) {
-					// Ignore
+			try (ResultSet resultSet = statement.executeQuery();){
+				while (resultSet.next()) {
+					idNodos.add(resultSet.getLong("node_id"));
 				}
 			}
-			if (statement != null) {
-				try {
-					statement.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}
-			}
-		}
+		} 
 		for (long id : idNodos) {
 			way.addNode(NodeDAO.getInstance().getNode(id));
 		}

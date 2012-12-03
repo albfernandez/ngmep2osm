@@ -52,22 +52,14 @@ public final class BuscaAsignaIds {
     public static void buscaOsmId () throws SQLException, ClassNotFoundException, IOException{
         final String query  = EntidadDAO.QUERY_BASE + " where osmid is  null and estado_robot = 0 and estado_manual = 0  " ;
 
-        ResultSet resultSet = null;
-        Statement stmt = null;
+        
+       
         List<Entidad> entidades = null; 
-        try {
-        	stmt = Database.getConnection().createStatement();
-        	resultSet = stmt.executeQuery(query);
+        try (Statement  stmt = Database.getConnection().createStatement();
+        	ResultSet resultSet = stmt.executeQuery(query);){        	
         	entidades = EntidadDAO.getInstance().getListFromRs(resultSet);
         }
-        finally {
-        	if (resultSet != null) {
-        		try {resultSet.close();} catch (Exception e) {}
-        	}
-        	if (stmt != null) {
-        		stmt.close();
-        	}
-        }
+        
         final List<Entity> entidadesOsm = new ArrayList<Entity>();
         final List<Entity> entidadesIne = new ArrayList<Entity>();
         final List<Entity> actualizadas = new ArrayList<Entity>();
@@ -112,16 +104,16 @@ public final class BuscaAsignaIds {
         }
         
         Log.log("Exportando entidades pendientes osm:" + entidadesOsm.size());
-        OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.pendientes_osm"))); 
-        XMLExporter.export(entidadesOsm, salida,true);
-        salida.close();
+        try (OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.pendientes_osm")));){ 
+        	XMLExporter.export(entidadesOsm, salida,true);
+        }
         Log.log("Exportando entidades pendientes ine:" + entidadesIne.size());
-        salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.pendientes_ine"))); 
-        XMLExporter.export(entidadesIne, salida,true);
-        salida.close();
-        salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.subir"))); 
-        XMLExporter.export(actualizadas, salida,true);
-        salida.close();
+        try (OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.pendientes_ine"))); ){
+             XMLExporter.export(entidadesIne, salida,true);
+        }
+        try (OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.subir")));){ 
+        	XMLExporter.export(actualizadas, salida,true);
+        }
     }
     
     private static void actualizarIguales(final Entidad entidad, final Node nodo) throws SQLException{

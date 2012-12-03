@@ -57,22 +57,12 @@ public final class Objetivo4 {
     public static void ejecutaObjetivo4 () throws SQLException, ClassNotFoundException, IOException{
         String query  =  EntidadDAO.QUERY_BASE + " where osmid is not  null and admin_level in (4,6,7,8) and estado_4 = 0 ";
         query = query + "and cod_prov in ('35', '38')";
-        Statement statement = null;
-		ResultSet resultSet = null;
-		List<Entidad> entidades = null;
-		try {
-			statement = Database.getConnection().createStatement();
-			resultSet = statement.executeQuery(query);
-			entidades = EntidadDAO.getInstance().getListFromRs(resultSet);
-		} finally {
-			if (resultSet != null) {
-				try { resultSet.close(); } catch (Exception e) {}
-			}
-			if (statement != null) {
-				statement.close();
-			}
 
-		}
+		List<Entidad> entidades = null;
+		try (Statement statement = Database.getConnection().createStatement();
+			ResultSet resultSet = statement.executeQuery(query);){			
+			entidades = EntidadDAO.getInstance().getListFromRs(resultSet);
+		} 
         final List<Entity> municipios = new ArrayList<Entity>();
         for (Entidad ine: entidades) {
             final String ineCapital = ine.getCodine();
@@ -108,9 +98,10 @@ public final class Objetivo4 {
         }
         if (!municipios.isEmpty()){
             final String nombreArchivo = Config.getInstance().getOsmOutputFile("objetivo4.subir");
-            final OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo)); 
-            XMLExporter.export(municipios, salida, false);
-            salida.close();
+            
+            try (final OutputStream salida = new GZIPOutputStream(new FileOutputStream(nombreArchivo));){ 
+            	XMLExporter.export(municipios, salida, false);
+            }
             Log.log("Generado el archivo objetivo4 (" + municipios.size() + "):"+nombreArchivo);
         }
         else {

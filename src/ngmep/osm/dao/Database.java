@@ -56,7 +56,7 @@ public final class Database {
         }
         return connection;
     }
-    public static void closeConnection() throws SQLException{
+    public static synchronized void closeConnection() throws SQLException{
         if (connection != null) {
             connection.close();
         }
@@ -64,26 +64,16 @@ public final class Database {
     
     private static void checkSimpleSchema(final Connection connection) {
     	DatabaseMetaData metadata = null;
-    	ResultSet resultSet = null;
 		try {
 			metadata = connection.getMetaData();
-			resultSet = metadata.getTables(null, null, "node_tags", null);
-	        simpleSchema = resultSet.next();
+			try (ResultSet resultSet = metadata.getTables(null, null, "node_tags", null);){
+				simpleSchema = resultSet.next();
+			}
 	        
 		}		
 		catch (SQLException e) {
 			e.printStackTrace();
-		}
-		finally {
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-				}
-				catch (Exception e) {
-					// Ignore
-				}
-			}
-		}
+		}		
     }
     public static boolean isSimpleSchema () {
     	return simpleSchema;
