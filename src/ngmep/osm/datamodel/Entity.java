@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class Entity {
 
     private long id; //NOPMD
@@ -38,7 +40,7 @@ public class Entity {
     
     
     public boolean isModified() {
-        return modified;
+        return this.modified;
     }
 
     public void setModified(final boolean modified) {
@@ -47,7 +49,7 @@ public class Entity {
 
 
     public long getId() {
-        return id;
+        return this.id;
     }
     public void setId(final long identifier) {
         if (this.id != identifier) {
@@ -56,35 +58,43 @@ public class Entity {
         }
     }
     public String getTag(final String tagName) {
-        return tags.get(tagName);
+        return this.tags.get(tagName);
     }
     public void setTag(final String tagName, final String value) {
-        if (value == null) {
-            removeTag(tagName);
+    	final String realTagName = StringUtils.trim(tagName);
+    	final String valtrim =StringUtils.trim(value);
+    	if (valtrim == null) {
+            removeTag(realTagName);
             return;
         }
-        final String valtrim =value.trim();
-        if (!tags.containsKey(tagName) || !valtrim.equals(tags.get(tagName))){
-            tags.put(tagName, valtrim);
+        
+    	// Si el tag no existe o si existe pero es distinto
+    	// Lo modificamos
+        if (!this.tags.containsKey(realTagName) || !valtrim.equals(this.tags.get(realTagName))){
+            this.tags.put(realTagName, valtrim);
             setModified(true);
         }
     }
     public void removeTag(final String tagName){
-        if (tags.containsKey(tagName)){
-            tags.remove(tagName);
+    	final String realTagName = StringUtils.trim(tagName);
+    	if (StringUtils.isBlank(realTagName)){
+    		return;
+    	}
+        if (this.tags.containsKey(realTagName)){
+            this.tags.remove(realTagName);
             setModified(true);
         }
     }
     
     public User getUser() {
-        return user;
+        return this.user;
     }
     public void setUser(final User user) {
         this.user = user;
         setModified(true);
     }
     public int getVersion() {
-        return version;
+        return this.version;
     }
     public void setVersion(final int version) {
         if (this.version != version){
@@ -93,7 +103,7 @@ public class Entity {
         }
     }
     public long getChangeset() {
-        return changeset;
+        return this.changeset;
     }
     public void setChangeset(final long changeset) {
         if (this.changeset != changeset) {
@@ -102,7 +112,7 @@ public class Entity {
         }
     }
     public long getTimestamp() {
-        return timestamp;
+        return this.timestamp;
     }
     public void setTimestamp(final long timestamp) {
         if (this.timestamp != timestamp){
@@ -111,13 +121,13 @@ public class Entity {
         }
     }
     public int getNumTags(){
-        return tags.size();
+        return this.tags.size();
     }
     public Set<String> getTagKeys () {
-        return  tags.keySet();
+        return  this.tags.keySet();
     }
     public boolean containsTag (final String key){
-        return tags.containsKey(key);
+        return this.tags.containsKey(key);
     }
 
 
@@ -125,7 +135,7 @@ public class Entity {
     public int hashCode() {
 
         int result = 1;
-        result = PRIME * result + (int) (id ^ (id >>> 32));
+        result = PRIME * result + (int) (this.id ^ (this.id >>> 32));
         return result;
     }
 
@@ -142,7 +152,7 @@ public class Entity {
             return false;
         }
         final Entity other = (Entity) obj;
-        if (id != other.id){
+        if (this.id != other.id){
             return false;
         }
         return true;
