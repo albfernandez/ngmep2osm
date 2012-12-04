@@ -170,7 +170,7 @@ public final class Objetivo3 {
         if (!osm.containsTag("source")){
             osm.setTag("source", IGN);
         }
-        else if (!osm.getTag("source").contains(IGN) ){        
+        else if (!osm.getTag("source").contains(IGN) ){
             osm.setTag("source", osm.getTag("source")+";"+ "Instituto Geográfico Nacional");
         }
         osm.setTag("source:date", "2011-06");
@@ -388,9 +388,21 @@ public final class Objetivo3 {
                 osm.setTag("name", ine.getName());
                 return true;
             }
+            
+            if (nombre.indexOf('/') > 0){
+            	String[] partes = nombre.split("/");
+            	for (String parte: partes) {
+            		if (!StringUtils.isBlank(parte) && ComparaCadenas.igualesObjetivo3(ine.getName(), parte) ){
+            			osm.setTag("name", nombre);
+            			return true;
+            		}
+            	}
+            }
                 
             return false;            
         }
+        
+        // Puesto el nombre en la tabla (valor != INE, OSM, AUTO)
         osm.setTag("name",ine.getDecisionNombre());
         return true;            
     }
