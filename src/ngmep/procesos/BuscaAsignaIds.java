@@ -73,8 +73,8 @@ public final class BuscaAsignaIds {
                 else if (nodo.containsTag("name:es")){
                     nombreOsm = nodo.getTag("name:es");
                 }
-                Log.log("INE:" + entidad.getCodine() + ":" + entidad.getName());
-                Log.log("OSM:" + nodo.getId() + ":" + nombreOsm);
+                //Log.log("INE:" + entidad.getCodine() + ":" + entidad.getName());
+                //Log.log("OSM:" + nodo.getId() + ":" + nombreOsm);
                 
                 if (entidad.getCodine().equals(nodo.getTag("ref:ine"))){
                 	actualizarIguales(entidad, nodo);
@@ -88,13 +88,13 @@ public final class BuscaAsignaIds {
                         final Node ine = new Node();
                         ine.setId(contador--);
                         entidad.setDecisionNombre("OSM");
-                        Objetivo3.actualiza(ine, entidad);           
+                        Objetivo3.actualiza(ine, entidad, false);           
                         ine.setModified(true);
                         if (!entidadesIne.contains(ine)){
                             entidadesIne.add(ine);
                         }
                         final Node nodo2 = NodeDAO.getInstance().getNode(nodo.getId());
-                        Objetivo3.actualiza(nodo2, entidad);
+                        Objetivo3.actualiza(nodo2, entidad, false);
                         if (!actualizadas.contains(nodo2)){
                             actualizadas.add(nodo2);
                         }
@@ -111,13 +111,14 @@ public final class BuscaAsignaIds {
         try (OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.pendientes_ine"))); ){
              XMLExporter.export(entidadesIne, salida,true);
         }
+        Log.log("Exportando entidades a actualizar:" + actualizadas.size());
         try (OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.subir")));){ 
         	XMLExporter.export(actualizadas, salida,true);
         }
     }
     
     private static void actualizarIguales(final Entidad entidad, final Node nodo) throws SQLException{
-    	Log.log("Actualizando:" + entidad.getCodine() + ":" + nodo.getId()); 
+    	//Log.log("Actualizando:" + entidad.getCodine() + ":" + nodo.getId()); 
         entidad.setOsmid(nodo.getId());
         EntidadDAO.getInstance().updateOsmId(entidad);
     }

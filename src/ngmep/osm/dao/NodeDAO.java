@@ -99,8 +99,7 @@ public final class NodeDAO extends AbstractEntityDAO {
 		node.setLat(resultSet.getDouble("lat"));
 		node.setLon(resultSet.getDouble("lon"));
 				
-		try (PreparedStatement statement = Database.getConnection().prepareStatement(
-				getQueryNodeTags());){			
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(getQueryNodeTags());){			
 			statement.setLong(1, identifier);
 			try (ResultSet resultSet2 = statement.executeQuery();){
 				initTags(node, resultSet2);
@@ -171,8 +170,7 @@ public final class NodeDAO extends AbstractEntityDAO {
     	" and st_distance(st_setsrid(st_point(?,?),4326), geom) < ?";
     	
 		List<Node> lista = null;
-		try (PreparedStatement statement = Database.getConnection().prepareStatement(query);){
-			
+		try (PreparedStatement statement = Database.getConnection().prepareStatement(query);){			
 			statement.setDouble(1, lon);
 			statement.setDouble(2, lat);
 			statement.setDouble(3, distance);

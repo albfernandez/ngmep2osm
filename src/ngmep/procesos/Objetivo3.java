@@ -96,7 +96,11 @@ public final class Objetivo3 {
         return osm;
     }
     
-    public static String actualiza (final Entity osm, final Entidad ine) {
+    public static String actualiza(final Entity osm, final Entidad ine) {
+    	return actualiza(osm, ine, true);
+    }
+    
+    public static String actualiza (final Entity osm, final Entidad ine, final boolean doLog) {
         /*
          * Para los casos que tienen ine:ref
          */
@@ -112,7 +116,9 @@ public final class Objetivo3 {
          */
         if (osm.containsTag("ref:ine")){                
             if (!ine.getCodine().equals(osm.getTag("ref:ine"))){
-            	Log.log("El elemento ya tiene REF_INE y NO COINCIDE:" + ine.getCodine() + "|" + osm.getTag("ref:ine"));
+            	if (doLog){
+            		Log.log("El elemento ya tiene REF_INE y NO COINCIDE:" + ine.getCodine() + "|" + osm.getTag("ref:ine"));
+            	}
                 return "El elemento ya tiene REF_INE y NO COINCIDE";
             }
             /*
@@ -195,9 +201,10 @@ public final class Objetivo3 {
         if (ajustarNombre(osm, ine)){
             return "";
         }
-        Log.log("INE:" + ine.getCodine() + " No se que hacer con la decision [" + ine.getDecisionNombre() +"]");
-        Log.log("osm:" + osm.getTag("name") + " ine:" + ine.getName());
-        return "No se que hacer con la decision [" + ine.getDecisionNombre() +"]";
+        if (doLog) {
+        	Log.log("INE:" + ine.getCodine() + " No se que hacer con la decision de nombre [" + ine.getDecisionNombre() +"]"+"osm:" + osm.getTag("name") + " ine:" + ine.getName());
+        }
+        return "No se que hacer con la decision de nombre [" + ine.getDecisionNombre() +"]";
         
     }
 
@@ -224,15 +231,18 @@ public final class Objetivo3 {
             }
             if (ine.getOsmid() <= 0){
                 error = "No tiene asignado osmid:" + ine.getCodine();
+                //Log.log(error);
             }
             else if (osm == null) {
                 error = "El osmid asignado no existe: " + ine.getOsmid();
+                Log.log(error);
             }
             else if (ine.getEstadoManual() != 0) {
                 error = "Estado manual " + ine.getEstadoManual();
             }
             else if (distanciaExcesiva (ine, osm)){
                 error ="Distancia excesiva entre los nodos";
+                Log.log(error);
             }            
             else {
                 error = actualiza(osm, ine); 
@@ -243,8 +253,9 @@ public final class Objetivo3 {
                     marcarProcesado(ine);
                 }
             }
+            
             if (!StringUtils.isBlank(error)) {
-            	Log.log(error);
+            	//Log.log(error);
                 errores.add(entidad2node(ine, error));
             }
 
@@ -348,7 +359,9 @@ public final class Objetivo3 {
     private static boolean ajustarNombre(final Entity osm, final Entidad ine) {
         final String nombre = osm.getTag("name");        
         if (StringUtils.isBlank(nombre)) {
-        	Log.log("osm sin nombre " + osm.getId());
+        	if (osm.getId() > 0){
+        		Log.log("osm sin nombre " + osm.getId());
+        	}
             return false;
         }
         
