@@ -1,4 +1,6 @@
 package ngmep.ngmep.datamodel;
+
+import org.apache.commons.lang3.StringUtils;
 /*
 	ngmep2osm - importador de datos de ngmep a openstreetmap
 	
@@ -52,7 +54,7 @@ public class Entidad { //NOPMD
     }
 
     public String getCodine() {
-        return codine;
+        return StringUtils.trim(this.codine);
     }
 
     public void setCodine(final String codine) {
@@ -60,7 +62,7 @@ public class Entidad { //NOPMD
     }
 
     public String getName() {
-        return name;
+        return StringUtils.trim(this.name);
     }
 
     public void setName(final String name) {
@@ -68,7 +70,7 @@ public class Entidad { //NOPMD
     }
 
     public double getAltura() {
-        return altura;
+        return this.altura;
     }
 
     public void setAltura(final double altura) {
@@ -76,7 +78,7 @@ public class Entidad { //NOPMD
     }
 
     public String getSourceAltura() {
-        return sourceAltura;
+        return StringUtils.trim(this.sourceAltura);
     }
 
     public void setSourceAltura(final String sourceAltura) {
@@ -84,7 +86,7 @@ public class Entidad { //NOPMD
     }
 
     public double getLon() {
-        return lon;
+        return this.lon;
     }
 
     public void setLon(final double lon) {
@@ -92,7 +94,7 @@ public class Entidad { //NOPMD
     }
 
     public double getLat() {
-        return lat;
+        return this.lat;
     }
 
     public void setLat(final double lat) {
@@ -100,7 +102,7 @@ public class Entidad { //NOPMD
     }
 
     public long getOsmid() {
-        return osmid;
+        return this.osmid;
     }
 
     public void setOsmid(final long osmid) {
@@ -108,7 +110,7 @@ public class Entidad { //NOPMD
     }
 
     public double getPoblacion() {
-        return poblacion;
+        return this.poblacion;
     }
 
     public void setPoblacion(final double poblacion) {
@@ -116,7 +118,7 @@ public class Entidad { //NOPMD
     }
 
     public String getPlace() {
-        return place;
+        return StringUtils.trim(this.place);
     }
 
     public void setPlace(final String place) {
@@ -124,7 +126,7 @@ public class Entidad { //NOPMD
     }
 
     public String getCodigoProvincia() {
-        return codigoProvincia;
+        return StringUtils.trim(this.codigoProvincia);
     }
 
     public void setCodigoProvincia(final String codigoProvincia) {
@@ -132,7 +134,7 @@ public class Entidad { //NOPMD
     }
 
     public String getNombreOficial() {
-        return nombreOficial;
+        return StringUtils.trim(this.nombreOficial);
     }
 
     public void setNombreOficial(final String nombreOficial) {
@@ -140,7 +142,7 @@ public class Entidad { //NOPMD
     }
 
     public String getNombreAlternativo() {
-        return nombreAlternativo;
+        return StringUtils.trim(this.nombreAlternativo);
     }
 
     public void setNombreAlternativo(final String nombreAlternativo) {
@@ -148,7 +150,7 @@ public class Entidad { //NOPMD
     }
 
     public String getNombreAntiguo() {
-        return nombreAntiguo;
+        return StringUtils.trim(this.nombreAntiguo);
     }
 
     public void setNombreAntiguo(final String nombreAntiguo) {
@@ -156,7 +158,7 @@ public class Entidad { //NOPMD
     }
 
     public String getName1() {
-        return name1;
+        return StringUtils.trim(this.name1);
     }
 
     public void setName1(final String name1) {
@@ -164,7 +166,7 @@ public class Entidad { //NOPMD
     }
 
     public String getName2() {
-        return name2;
+        return StringUtils.trim(this.name2);
     }
 
     public void setName2(final String name2) {
@@ -172,7 +174,7 @@ public class Entidad { //NOPMD
     }
 
     public String getLan1() {
-        return lan1;
+        return StringUtils.trim(this.lan1);
     }
 
     public void setLan1(final String lan1) {
@@ -180,7 +182,7 @@ public class Entidad { //NOPMD
     }
 
     public String getLan2() {
-        return lan2;
+        return StringUtils.trim(this.lan2);
     }
 
     public void setLan2(final String lan2) {
@@ -188,7 +190,7 @@ public class Entidad { //NOPMD
     }
 
     public String getFechaCambioNombre() {
-        return fechaCambioNombre;
+        return StringUtils.trim(this.fechaCambioNombre);
     }
 
     public void setFechaCambioNombre(final String fechaCambioNombre) {
@@ -196,7 +198,7 @@ public class Entidad { //NOPMD
     }
 
     public String getDecreto() {
-        return decreto;
+        return this.decreto;
     }
 
     public void setDecreto(final String decreto) {
@@ -204,7 +206,7 @@ public class Entidad { //NOPMD
     }
 
     public String getLocName() {
-        return locName;
+        return StringUtils.trim(this.locName);
     }
 
     public void setLocName(final String locName) {
@@ -212,7 +214,7 @@ public class Entidad { //NOPMD
     }
 
     public String getCodineMun() {
-        return codineMun;
+        return StringUtils.trim(this.codineMun);
     }
 
     public void setCodineMun(final String codineMun) {
@@ -220,7 +222,7 @@ public class Entidad { //NOPMD
     }
 
     public String getNombreMun() {
-        return nombreMun;
+        return StringUtils.trim(this.nombreMun);
     }
 
     public void setNombreMun(final String nombreMun) {
@@ -228,7 +230,7 @@ public class Entidad { //NOPMD
     }
 
     public int getAdministrativeLevel() {
-        return administrativeLevel;
+        return this.administrativeLevel;
     }
 
     public void setAdministrativeLevel(final int adminLevel) {
@@ -236,7 +238,7 @@ public class Entidad { //NOPMD
     }
 
     public double getPoblacionMuni() {
-        return poblacionMuni;
+        return this.poblacionMuni;
     }
 
     public void setPoblacionMuni(final double poblacionMuni) {
@@ -244,7 +246,7 @@ public class Entidad { //NOPMD
     }
 
     public int getEstadoManual() {
-        return estadoManual;
+        return this.estadoManual;
     }
 
     public void setEstadoManual(final int estadoManual) {
@@ -252,7 +254,7 @@ public class Entidad { //NOPMD
     }
 
     public int getEstadoRobot() {
-        return estadoRobot;
+        return this.estadoRobot;
     }
 
     public void setEstadoRobot(final int estadoRobot) {
@@ -260,7 +262,7 @@ public class Entidad { //NOPMD
     }
 
     public String getDecisionNombre() {
-        return decisionNombre;
+        return StringUtils.trim(this.decisionNombre);
     }
 
     public void setDecisionNombre(final String decisionNombre) {
