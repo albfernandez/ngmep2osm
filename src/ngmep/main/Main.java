@@ -41,6 +41,26 @@ public final class Main {
     	final boolean objetivo2 = isProcessEnabled(args, "2");
     	final boolean objetivo3 = isProcessEnabled(args, "3");
     	final boolean objetivo4 = isProcessEnabled(args, "4");
+    	
+    	
+    	if (! (objetivo2 || objetivo3 || objetivo4 ) ){
+    		Log.log("Se debe indicar algun proceso a ejecutar");
+    		return;
+    	}
+    	
+    	StringBuilder procesos = new StringBuilder();
+    	if (objetivo2) {
+    		procesos.append(" objetivo2");
+    	}
+    	if (objetivo3) {
+    		procesos.append(" objetivo3");
+    	}
+    	if (objetivo4){
+    		procesos.append(" objetivo4");
+    	}
+    	
+    	
+    	Log.log("Ejecutando procesos:" + procesos.toString());
 
         final StopWatch cronometro = new StopWatch();
         cronometro.start();
