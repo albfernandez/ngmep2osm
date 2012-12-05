@@ -19,6 +19,11 @@ package ngmep.procesos;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import static ngmep.ngmep.datamodel.Constants.KEY_INE_MUNICIPIO;
+import static ngmep.ngmep.datamodel.Constants.KEY_REF_INE;
+import static ngmep.ngmep.datamodel.Constants.ROLE_ADMIN_CENTRE;
+import static ngmep.ngmep.datamodel.Constants.ROLE_OUTER;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -46,7 +51,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public final class Objetivo4 {
 
-    public static final String ROLE_ADMIN_CENTRE = "admin_centre";
+
     
     
     private Objetivo4(){
@@ -68,7 +73,7 @@ public final class Objetivo4 {
             final String ineCapital = ine.getCodine();
             final String ineMunicipio = ine.getCodineMun();
             final String ineRelacion = ineMunicipio.substring(0, 5);
-            final List<Relation> relaciones = RelationDAO.getInstance().getRelationsByTag("ine:municipio", ineRelacion);
+            final List<Relation> relaciones = RelationDAO.getInstance().getRelationsByTag(KEY_INE_MUNICIPIO, ineRelacion);
             if (relaciones.size() == 1){
                 final Relation municipio = relaciones.get(0);
                 final Entity localidad = getLocalidad(ine.getCodine());
@@ -81,7 +86,7 @@ public final class Objetivo4 {
                         municipios.add(municipio);
                         for (RelationMember miembro : municipio.getMembers()){
                             if (StringUtils.isBlank(miembro.getRole())){
-                                miembro.setRole("outer");                                
+                                miembro.setRole(ROLE_OUTER);                                
                             }
                         }
                         //marcarProcesado(ine);
@@ -112,7 +117,7 @@ public final class Objetivo4 {
     private static Entity getLocalidad(final String codine) throws SQLException {
         //Entity osm = NodeDAO.getInstance().getNode(id);
         
-        final List<Node> localidades = NodeDAO.getInstance().getNodesByTag("ref:ine", codine);
+        final List<Node> localidades = NodeDAO.getInstance().getNodesByTag(KEY_REF_INE, codine);
         /*
          El validador de JOSM dice que no se puede poner admin_centre a un way,
          Asi que de momento desactivamos esto.

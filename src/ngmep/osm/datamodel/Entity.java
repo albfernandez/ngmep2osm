@@ -127,7 +127,8 @@ public class Entity {
         return  this.tags.keySet();
     }
     public boolean containsTag (final String key){
-        return this.tags.containsKey(key);
+    	final String realKey = StringUtils.trim(key);
+        return this.tags.containsKey(realKey);
     }
 
 

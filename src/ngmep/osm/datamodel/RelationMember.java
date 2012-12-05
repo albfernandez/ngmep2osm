@@ -27,8 +27,8 @@ public class RelationMember {
         super();
     }
     public String getRole() {
-        if (role != null) {
-            return role;
+        if (this.role != null) {
+            return this.role;
         }
         return "";
     }
@@ -36,7 +36,7 @@ public class RelationMember {
         this.role = role;
     }
     public Entity getEntity() {
-        return entity;
+        return this.entity;
     }
     public void setEntity(final Entity entity) {
         this.entity = entity;

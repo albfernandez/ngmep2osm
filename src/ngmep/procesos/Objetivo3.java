@@ -19,6 +19,27 @@ package ngmep.procesos;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import static ngmep.ngmep.datamodel.Constants.IGN;
+import static ngmep.ngmep.datamodel.Constants.KEY_ADMIN_LEVEL;
+import static ngmep.ngmep.datamodel.Constants.KEY_BAD_INE_REF;
+import static ngmep.ngmep.datamodel.Constants.KEY_CAPITAL;
+import static ngmep.ngmep.datamodel.Constants.KEY_ELE;
+import static ngmep.ngmep.datamodel.Constants.KEY_FIXME;
+import static ngmep.ngmep.datamodel.Constants.KEY_IS_IN_PROVINCE_CODE;
+import static ngmep.ngmep.datamodel.Constants.KEY_LOC_NAME;
+import static ngmep.ngmep.datamodel.Constants.KEY_NAME;
+import static ngmep.ngmep.datamodel.Constants.KEY_OFFICIAL_NAME;
+import static ngmep.ngmep.datamodel.Constants.KEY_OLD_NAME;
+import static ngmep.ngmep.datamodel.Constants.KEY_PLACE;
+import static ngmep.ngmep.datamodel.Constants.KEY_POPULATION;
+import static ngmep.ngmep.datamodel.Constants.KEY_POPULATION_DATE;
+import static ngmep.ngmep.datamodel.Constants.KEY_REF_INE;
+import static ngmep.ngmep.datamodel.Constants.KEY_SOURCE;
+import static ngmep.ngmep.datamodel.Constants.KEY_SOURCE_DATE;
+import static ngmep.ngmep.datamodel.Constants.KEY_SOURCE_ELE;
+import static ngmep.ngmep.datamodel.Constants.KEY_SOURCE_FILE;
+import static ngmep.ngmep.datamodel.Constants.KEY_SOURCE_NAME;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -46,7 +67,9 @@ import org.apache.commons.lang3.StringUtils;
 
 public final class Objetivo3 {
     
-	public static final String IGN = "Instituto Geográfico Nacional";
+
+
+
 	
 
     private static int iderror = 0;
@@ -65,33 +88,33 @@ public final class Objetivo3 {
         osm.setId(--iderror);
         osm.setLat(ine.getLat());
         osm.setLon(ine.getLon());
-        osm.setTag("ref:ine", ine.getCodine());
-        osm.setTag("place", ine.getPlace());
+        osm.setTag(KEY_REF_INE, ine.getCodine());
+        osm.setTag(KEY_PLACE, ine.getPlace());
         if (ine.getAltura() > 0){
-            osm.setTag("ele", doubleToString(ine.getAltura()));
-            osm.setTag("source:ele", ine.getSourceAltura());
+            osm.setTag(KEY_ELE, doubleToString(ine.getAltura()));
+            osm.setTag(KEY_SOURCE_ELE, ine.getSourceAltura());
         }
         if (ine.getPoblacion() >= 0){
-            osm.setTag("population", doubleToString(ine.getPoblacion()));
-            osm.setTag("population:date", "2009");
+            osm.setTag(KEY_POPULATION, doubleToString(ine.getPoblacion()));
+            osm.setTag(KEY_POPULATION_DATE, "2009");
         }
-        osm.setTag("source", "Instituto Geográfico Nacional");
-        osm.setTag("source:date", "2011-06");
-        osm.setTag("source:file", "http://centrodedescargas.cnig.es/CentroDescargas/equipamiento/BD_Municipios-Entidades.zip");
-        osm.setTag("source:name", "Nomenclátor Geográfico de Municipios y Entidades de Población");
+        osm.setTag(KEY_SOURCE, "Instituto Geográfico Nacional");
+        osm.setTag(KEY_SOURCE_DATE, "2011-06");
+        osm.setTag(KEY_SOURCE_FILE, "http://centrodedescargas.cnig.es/CentroDescargas/equipamiento/BD_Municipios-Entidades.zip");
+        osm.setTag(KEY_SOURCE_NAME, "Nomenclátor Geográfico de Municipios y Entidades de Población");
         if (ine.getAdministrativeLevel() > 0){
-            osm.setTag("admin_level", Integer.toString(ine.getAdministrativeLevel()));
-            osm.setTag("capital", Integer.toString(ine.getAdministrativeLevel()));               
+            osm.setTag(KEY_ADMIN_LEVEL, Integer.toString(ine.getAdministrativeLevel()));
+            osm.setTag(KEY_CAPITAL, Integer.toString(ine.getAdministrativeLevel()));               
         }
         
         //if (!StringUtils.isBlank(ine.getNombreMun())){
         //    osm.setTag("is_in:municipality", ine.getNombreMun());
         //}
-        osm.setTag("is_in:province_code", ine.getCodigoProvincia());
+        osm.setTag(KEY_IS_IN_PROVINCE_CODE, ine.getCodigoProvincia());
         estableceNombresAlternativos(osm, ine);
-        osm.setTag("name", ine.getName());
+        osm.setTag(KEY_NAME, ine.getName());
         if (!StringUtils.isBlank(error)) {
-                osm.setTag("fixme", error);
+                osm.setTag(KEY_FIXME, error);
         }
         return osm;
     }
@@ -104,9 +127,9 @@ public final class Objetivo3 {
         /*
          * Para los casos que tienen ine:ref
          */
-        if (osm.containsTag("ine:ref")) {
-            osm.setTag("ref:ine", osm.getTag("ine:ref"));
-            osm.removeTag("ine:ref");
+        if (osm.containsTag(KEY_BAD_INE_REF)) {
+            osm.setTag(KEY_REF_INE, osm.getTag(KEY_BAD_INE_REF));
+            osm.removeTag(KEY_BAD_INE_REF);
         }
 
         /*
@@ -114,10 +137,10 @@ public final class Objetivo3 {
          *  si es igual continuamos importando campos.
          *  Si no es igual, seguimos con otro
          */
-        if (osm.containsTag("ref:ine")){                
-            if (!ine.getCodine().equals(osm.getTag("ref:ine"))){
+        if (osm.containsTag(KEY_REF_INE)){                
+            if (!ine.getCodine().equals(osm.getTag(KEY_REF_INE))){
             	if (doLog){
-            		Log.log("El elemento ya tiene REF_INE y NO COINCIDE:" + ine.getCodine() + "|" + osm.getTag("ref:ine"));
+            		Log.log("El elemento ya tiene REF_INE y NO COINCIDE:" + ine.getCodine() + "|" + osm.getTag(KEY_REF_INE));
             	}
                 return "El elemento ya tiene REF_INE y NO COINCIDE";
             }
@@ -129,13 +152,13 @@ public final class Objetivo3 {
             
         }
         // Ponemos el ref:ine siempre
-        osm.setTag("ref:ine", ine.getCodine());
+        osm.setTag(KEY_REF_INE, ine.getCodine());
         
         // Si no tiene place se lo ponemos 
         // Si tiene place, solo sobreescribimos si es village
         // (village es el que se pone siempre en caso de duda)
-        if (!osm.containsTag("place")){
-            osm.setTag("place", ine.getPlace());
+        if (!osm.containsTag(KEY_PLACE)){
+            osm.setTag(KEY_PLACE, ine.getPlace());
         }
         // FIXME Desactivado en segundas pasadas
         //else if ("village".equals(osm.getTag("place"))){
@@ -143,9 +166,9 @@ public final class Objetivo3 {
         //}
 
         // Si tenemos dato de altura, pero el nodo osm no, se lo rellenamos
-        if (!osm.containsTag("ele") && ine.getAltura() > 0){
-            osm.setTag("ele", doubleToString(ine.getAltura()));
-            osm.setTag("source:ele", ine.getSourceAltura());
+        if (!osm.containsTag(KEY_ELE) && ine.getAltura() > 0){
+            osm.setTag(KEY_ELE, doubleToString(ine.getAltura()));
+            osm.setTag(KEY_SOURCE_ELE, ine.getSourceAltura());
         }
         
         /*
@@ -154,42 +177,42 @@ public final class Objetivo3 {
          * solo si es anterior a 2009
          */
         if (ine.getPoblacion() >= 0){
-            if (!osm.containsTag("population")){
-                osm.setTag("population", doubleToString(ine.getPoblacion()));
-                osm.setTag("population:date", "2009");
+            if (!osm.containsTag(KEY_POPULATION)){
+                osm.setTag(KEY_POPULATION, doubleToString(ine.getPoblacion()));
+                osm.setTag(KEY_POPULATION_DATE, "2009");
             }
-            else if (osm.containsTag("population:date") && osm.getTag("population:date").matches("^[0-9]+$")){
-                if (Integer.parseInt(osm.getTag("population:date")) < 2009){
+            else if (osm.containsTag(KEY_POPULATION_DATE) && osm.getTag(KEY_POPULATION_DATE).matches("^[0-9]+$")){
+                if (Integer.parseInt(osm.getTag(KEY_POPULATION_DATE)) < 2009){
                     osm.setTag("population", doubleToString(ine.getPoblacion()));
-                    osm.setTag("population:date", "2009");
+                    osm.setTag(KEY_POPULATION_DATE, "2009");
                 }                
             }
         }
         
         // Rellenamos source,
-        if (!osm.containsTag("source")){
-            osm.setTag("source", IGN);
+        if (!osm.containsTag(KEY_SOURCE)){
+            osm.setTag(KEY_SOURCE, IGN);
         }
-        else if (!osm.getTag("source").contains(IGN) ){
-            osm.setTag("source", osm.getTag("source")+";"+ "Instituto Geográfico Nacional");
+        else if (!osm.getTag(KEY_SOURCE).contains(IGN) ){
+            osm.setTag(KEY_SOURCE, osm.getTag(KEY_SOURCE)+";"+ "Instituto Geográfico Nacional");
         }
-        osm.setTag("source:date", "2011-06");
-        osm.setTag("source:file", "http://centrodedescargas.cnig.es/CentroDescargas/equipamiento/BD_Municipios-Entidades.zip");
-        osm.setTag("source:name", "Nomenclátor Geográfico de Municipios y Entidades de Población");
+        osm.setTag(KEY_SOURCE_DATE, "2011-06");
+        osm.setTag(KEY_SOURCE_FILE, "http://centrodedescargas.cnig.es/CentroDescargas/equipamiento/BD_Municipios-Entidades.zip");
+        osm.setTag(KEY_SOURCE_NAME, "Nomenclátor Geográfico de Municipios y Entidades de Población");
         
         
         // Si es capital, rellenamos esos datos siempre
         // FIXME Antes se rellenaba siempre, ahora solo si no están ya rellenos
-        if (ine.getAdministrativeLevel() > 0 && !osm.containsTag("admin_level") && !osm.containsTag("capital")){
-            osm.setTag("admin_level", Integer.toString(ine.getAdministrativeLevel()));
-            osm.setTag("capital", Integer.toString(ine.getAdministrativeLevel()));               
+        if (ine.getAdministrativeLevel() > 0 && !osm.containsTag(KEY_ADMIN_LEVEL) && !osm.containsTag(KEY_CAPITAL)){
+            osm.setTag(KEY_ADMIN_LEVEL, Integer.toString(ine.getAdministrativeLevel()));
+            osm.setTag(KEY_CAPITAL, Integer.toString(ine.getAdministrativeLevel()));               
         }
         // Si tenemos el nombre del muncipio al que pertenece rellenamos
 //        if (!StringUtils.isBlank(ine.getNombreMun())){
 //            osm.setTag("is_in:municipality", ine.getNombreMun());
 //        }
         // Rellenamos la provincia a la que pertenece siempre.
-        osm.setTag("is_in:province_code", ine.getCodigoProvincia());
+        osm.setTag(KEY_IS_IN_PROVINCE_CODE, ine.getCodigoProvincia());
 
         // Con esto establecemos los nombres en otros idiomas, nombres antiguos
         // nombre alternativos, etc
@@ -202,7 +225,7 @@ public final class Objetivo3 {
             return "";
         }
         if (doLog) {
-        	Log.log("INE:" + ine.getCodine() + " No se que hacer con la decision de nombre [" + ine.getDecisionNombre() +"]"+"osm:" + osm.getTag("name") + " ine:" + ine.getName());
+        	Log.log("INE:" + ine.getCodine() + " No se que hacer con la decision de nombre [" + ine.getDecisionNombre() +"]"+"osm:" + osm.getTag(KEY_NAME) + " ine:" + ine.getName());
         }
         return "No se que hacer con la decision de nombre [" + ine.getDecisionNombre() +"]";
         
@@ -315,7 +338,7 @@ public final class Objetivo3 {
         return osm;
     }
     private static boolean esLocalidad(final Entity osm) {
-        return osm.containsTag("place") && osm.containsTag("name"); 
+        return osm.containsTag(KEY_PLACE) && osm.containsTag(KEY_NAME); 
     }
 
 	private static void marcarProcesado(final Entidad ine) throws SQLException {
@@ -343,33 +366,35 @@ public final class Objetivo3 {
 //        if (!osm.containsTag("alt_name") && !StringUtils.isBlank(ine.getNombreAlternativo())) {
 //            osm.setTag("alt_name", ine.getNombreAlternativo());
 //        }
-        if (!osm.containsTag("loc_name") && !StringUtils.isBlank(ine.getLocName())) {
-            osm.setTag("loc_name", ine.getLocName());
+        if (!osm.containsTag(KEY_LOC_NAME) && !StringUtils.isBlank(ine.getLocName())) {
+            osm.setTag(KEY_LOC_NAME, ine.getLocName());
         }
-        if (!osm.containsTag("official_name") && !StringUtils.isBlank(ine.getNombreOficial())) {
-            osm.setTag("official_name", ine.getNombreOficial());
+        if (!osm.containsTag(KEY_OFFICIAL_NAME) && !StringUtils.isBlank(ine.getNombreOficial())) {
+            osm.setTag(KEY_OFFICIAL_NAME, ine.getNombreOficial());
         }
 
-        if (!osm.containsTag("old_name") && !StringUtils.isBlank(ine.getNombreAntiguo())) {
-            osm.setTag("old_name", ine.getNombreAntiguo());
+        if (!osm.containsTag(KEY_OLD_NAME) && !StringUtils.isBlank(ine.getNombreAntiguo())) {
+            osm.setTag(KEY_OLD_NAME, ine.getNombreAntiguo());
         }
     }
 
     
     private static boolean ajustarNombre(final Entity osm, final Entidad ine) {
-        final String nombre = osm.getTag("name");        
+        final String nombre = StringUtils.trim(osm.getTag(KEY_NAME));        
         if (StringUtils.isBlank(nombre)) {
-        	if (osm.getId() > 0){
+        	/*if (osm.getId() > 0){
         		Log.log("osm sin nombre " + osm.getId());
         	}
-            return false;
+        	*/
+        	osm.setTag(KEY_NAME, ine.getName());
+            return true;
         }
         
         if ("OSM".equals(ine.getDecisionNombre())){
             return true;
         }
         if ("INE".equals(ine.getDecisionNombre())){
-            osm.setTag("name",ine.getName());
+            osm.setTag(KEY_NAME,ine.getName());
             return true;
         }
         if ("AUTO".equals(ine.getDecisionNombre())){
@@ -377,15 +402,15 @@ public final class Objetivo3 {
         		return true;
         	}
             if (ComparaCadenas.igualesObjetivo3(ine.getName(), nombre)){
-                osm.setTag("name",ine.getName());
+                osm.setTag(KEY_NAME,ine.getName());
                 return true;
             }
             if (ComparaCadenas.prefijoDeN2(ine.getName(), nombre)){
-                osm.setTag("name", nombre);
+                osm.setTag(KEY_NAME, nombre);
                 return true;
             }
             if (ComparaCadenas.prefijoDeN2(nombre, ine.getName())){
-                osm.setTag("name", ine.getName());
+                osm.setTag(KEY_NAME, ine.getName());
                 return true;
             }
             
@@ -393,7 +418,7 @@ public final class Objetivo3 {
             	String[] partes = nombre.split("/");
             	for (String parte: partes) {
             		if (!StringUtils.isBlank(parte) && ComparaCadenas.igualesObjetivo3(ine.getName(), parte) ){
-            			osm.setTag("name", nombre);
+            			osm.setTag(KEY_NAME, nombre);
             			return true;
             		}
             	}
@@ -403,7 +428,7 @@ public final class Objetivo3 {
         }
         
         // Puesto el nombre en la tabla (valor != INE, OSM, AUTO)
-        osm.setTag("name",ine.getDecisionNombre());
+        osm.setTag(KEY_NAME,ine.getDecisionNombre());
         return true;            
     }
 

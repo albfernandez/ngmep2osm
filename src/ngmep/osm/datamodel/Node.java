@@ -27,14 +27,14 @@ public class Node extends Entity{
         super();
     }
     public double getLat() {
-        return lat;
+        return this.lat;
     }
     public void setLat(final double lat) {
         this.lat = lat;
         setModified(true);
     }
     public double getLon() {
-        return lon;
+        return this.lon;
     }
     public void setLon(final double lon) {
         this.lon = lon;

@@ -42,7 +42,7 @@ public class Relation extends Entity{
         
     }
     public boolean containsMemberWithRole(final String role) {
-        for (RelationMember member: members) {
+        for (RelationMember member: this.members) {
             if (role.equals(member.getRole())){
                 return true;
             }

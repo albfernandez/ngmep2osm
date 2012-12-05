@@ -26,13 +26,13 @@ public class User {
     
     
     public int getId() {
-        return id;
+        return this.id;
     }
     public void setId(final int identifier) {
         this.id = identifier;
     }
     public String getName() {
-        return name;
+        return this.name;
     }
     public void setName(final String name) {
         this.name = name;

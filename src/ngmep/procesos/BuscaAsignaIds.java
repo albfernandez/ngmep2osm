@@ -19,6 +19,10 @@ package ngmep.procesos;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import static ngmep.ngmep.datamodel.Constants.KEY_NAME;
+import static ngmep.ngmep.datamodel.Constants.KEY_NAME_ES;
+import static ngmep.ngmep.datamodel.Constants.KEY_REF_INE;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -67,16 +71,16 @@ public final class BuscaAsignaIds {
             final List<Node> nodos = NodeDAO.getInstance().getPoblaciones(entidad.getLon(), entidad.getLat(), 0.02);
             for (Node nodo : nodos){
                 String nombreOsm = null;
-                if (nodo.containsTag( "name")){
-                    nombreOsm = nodo.getTag("name");
+                if (nodo.containsTag(KEY_NAME)){
+                    nombreOsm = nodo.getTag(KEY_NAME);
                 }
-                else if (nodo.containsTag("name:es")){
-                    nombreOsm = nodo.getTag("name:es");
+                else if (nodo.containsTag(KEY_NAME_ES)){
+                    nombreOsm = nodo.getTag(KEY_NAME_ES);
                 }
                 //Log.log("INE:" + entidad.getCodine() + ":" + entidad.getName());
                 //Log.log("OSM:" + nodo.getId() + ":" + nombreOsm);
                 
-                if (entidad.getCodine().equals(nodo.getTag("ref:ine"))){
+                if (entidad.getCodine().equals(nodo.getTag(KEY_REF_INE))){
                 	actualizarIguales(entidad, nodo);
                 }                
                 if (ComparaCadenas.iguales(entidad.getName(), nombreOsm)){
@@ -95,7 +99,7 @@ public final class BuscaAsignaIds {
                         }
                         final Node nodo2 = NodeDAO.getInstance().getNode(nodo.getId());
                         Objetivo3.actualiza(nodo2, entidad, false);
-                        if (!actualizadas.contains(nodo2)){
+                        if (!actualizadas.contains(nodo2) && nodo2.isModified()){
                             actualizadas.add(nodo2);
                         }
                     }
