@@ -40,11 +40,11 @@ public final class UserDAO {
     }
     public static final String QUERY = "select id, name from users where id = ?";
     public User getUser(final int userId) throws SQLException{
-        if (cache.get(userId) == null){
+        if (this.cache.get(userId) == null){
             final User user = getUserFromBD(userId);
-            cache.put(userId, user);
+            this.cache.put(userId, user);
         }
-        return cache.get(userId);
+        return this.cache.get(userId);
     }
     public User getUserFromBD(final int userId) throws SQLException{
     	User user = null;

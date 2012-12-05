@@ -67,7 +67,7 @@ public class Config extends Properties{
 		
 	}
 	private void init(){
-        fecha =  new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());        
+        this.fecha =  new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());        
         File osm = new File(getOutputDir());
         if (!osm.exists()){
         	if (!osm.mkdirs()){
@@ -102,10 +102,10 @@ public class Config extends Properties{
     }    
     
     public String getOsmOutputFile (String baseName) {
-    	return getOutputDir() +  File.separator + baseName + "."+ fecha + ".osm.gz";
+    	return getOutputDir() +  File.separator + baseName + "."+ this.fecha + ".osm.gz";
     }
 	public String getLogFile() {
-		return getOutputDir() + File.separator + "log"+File.separator + "log_"+ fecha+ ".log";
+		return getOutputDir() + File.separator + "log"+File.separator + "log_"+ this.fecha+ ".log";
 	}
 	@Override
 	public synchronized boolean equals(Object o) {	
