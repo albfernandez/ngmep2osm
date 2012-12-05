@@ -18,3 +18,9 @@ Para compilar es necesario :
 - el driver jdbc de postgresql,
 - commons-lang3
 - jdk 7
+
+Objetivos a conseguir
+1. Importar las capitales de municipio que no estén presentes en OSM.
+2. Importar otras poblaciones no capitales que no estén presentes en OSM.
+3. Aportar datos (código INE, población, elevación) a las entidades presentes en OSM.
+4. Relacionar las capitales de todos los municipios con sus limites.

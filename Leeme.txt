@@ -31,3 +31,23 @@ Ejemplo
 output.dir=/home/ine/
 database.config.file=/home/osm/osmc.auth
 logConsola=true
+
+
+
+
+Importacion de NGMEP (resumen, informacion detallada en http://wiki.openstreetmap.org/wiki/ES:NGMEP) 
+
+Objetivo1 (TERMINADO)
+	Importar las capitales de municipio que no estén presentes en OSM.
+
+Objetivo2 ()
+	Importar otras poblaciones no capitales que no estén presentes en OSM.
+	Nota: el programa hace 1 y 2 juntos.
+
+Objetivo3 ()
+	Aportar datos (código INE, población, elevación) a las entidades presentes en OSM.
+
+Objetivo4 ()
+	Relacionar las capitales de todos los municipios con sus limites.
+		
+
