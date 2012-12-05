@@ -59,7 +59,7 @@ public final class WayDAO extends AbstractEntityDAO{
      
         return way;
     }
-    private Way getWay(final ResultSet resultSetWay) throws SQLException {
+    public Way getWay(final ResultSet resultSetWay) throws SQLException {
         final long wayId = resultSetWay.getLong("id");
         final Way way = new Way();
         way.setId(wayId);

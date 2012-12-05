@@ -19,10 +19,10 @@ package ngmep.procesos;
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+import static ngmep.ngmep.datamodel.Constants.KEY_CAPITAL;
 import static ngmep.ngmep.datamodel.Constants.KEY_NAME;
 import static ngmep.ngmep.datamodel.Constants.KEY_NAME_ES;
 import static ngmep.ngmep.datamodel.Constants.KEY_REF_INE;
-import static ngmep.ngmep.datamodel.Constants.KEY_CAPITAL;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,9 +36,9 @@ import java.util.zip.GZIPOutputStream;
 
 import ngmep.config.Config;
 import ngmep.ngmep.dao.EntidadDAO;
+import ngmep.ngmep.dao.PoblacionDAO;
 import ngmep.ngmep.datamodel.Entidad;
 import ngmep.osm.dao.Database;
-import ngmep.osm.dao.NodeDAO;
 import ngmep.osm.datamodel.Entity;
 import ngmep.osm.datamodel.Node;
 import ngmep.osm.log.Log;
@@ -81,22 +81,22 @@ public final class BuscaAsignaIds {
         final List<Entity> entidadesIne = new ArrayList<Entity>();
         final List<Entity> entidadesCapitalesIne = new ArrayList<Entity>();
         for (Entidad entidad: entidades) {            
-            final List<Node> nodos = NodeDAO.getInstance().getPoblaciones(entidad.getLon(), entidad.getLat(), 0.02);
+            final List<Entity> poblaciones = PoblacionDAO.getInstance().getPoblaciones(entidad.getLon(), entidad.getLat(), 0.03);
 			boolean encontrado = false;
-			for (Node nodo : nodos) {
+			for (Entity entity : poblaciones) {
 				String nombreOsm = null;
-				if (nodo.containsTag(KEY_NAME)) {
-					nombreOsm = nodo.getTag(KEY_NAME);
-				} else if (nodo.containsTag(KEY_NAME_ES)) {
-					nombreOsm = nodo.getTag(KEY_NAME_ES);
+				if (entity.containsTag(KEY_NAME)) {
+					nombreOsm = entity.getTag(KEY_NAME);
+				} else if (entity.containsTag(KEY_NAME_ES)) {
+					nombreOsm = entity.getTag(KEY_NAME_ES);
 				}
 
-				if (entidad.getCodine().equals(nodo.getTag(KEY_REF_INE))) {
-					actualizarIguales(entidad, nodo);
+				if (entity.containsTag(KEY_REF_INE) && entidad.getCodine().equals(entity.getTag(KEY_REF_INE))) {
+					actualizarIguales(entidad, entity);
 					encontrado = true;
 					break;
-				} else if (ComparaCadenas.iguales(entidad.getName(), nombreOsm)) {
-					actualizarIguales(entidad, nodo);
+				} else if (!entity.containsTag(KEY_REF_INE) && ComparaCadenas.iguales(entidad.getName(), nombreOsm)) {
+					actualizarIguales(entidad, entity);
 					encontrado = true;
 					break;
 				}
@@ -126,8 +126,8 @@ public final class BuscaAsignaIds {
         }
     }
     
-    private static void actualizarIguales(final Entidad entidad, final Node nodo) throws SQLException{
-        entidad.setOsmid(nodo.getId());
+    private static void actualizarIguales(final Entidad entidad, final Entity entity) throws SQLException{
+        entidad.setOsmid(entity.getId());
         EntidadDAO.getInstance().updateOsmId(entidad);
     }
 
