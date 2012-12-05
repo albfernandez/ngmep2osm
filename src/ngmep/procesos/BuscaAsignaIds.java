@@ -22,6 +22,7 @@ package ngmep.procesos;
 import static ngmep.ngmep.datamodel.Constants.KEY_NAME;
 import static ngmep.ngmep.datamodel.Constants.KEY_NAME_ES;
 import static ngmep.ngmep.datamodel.Constants.KEY_REF_INE;
+import static ngmep.ngmep.datamodel.Constants.KEY_CAPITAL;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,82 +48,85 @@ public final class BuscaAsignaIds {
 //    private static final String[] PLACES = new String[] { "city","town", "village", "hamlet", "suburb","isolated_dwelling"};
 
 
-    private static int contador = -1;
+
 
     private BuscaAsignaIds() {
     	// No instances
     }
 
+    /**
+     * En la lista de entidades ine, busca su correspondiente osm (si existe).
+     * 
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
     public static void buscaOsmId () throws SQLException, ClassNotFoundException, IOException{
-        final String query  = EntidadDAO.QUERY_BASE + " where osmid is  null and estado_robot = 0 and estado_manual = 0  " ;
+        final String query  = 
+        		EntidadDAO.QUERY_BASE + 
+        		" where " +
+        		"osmid is null " +
+        		"and estado_robot = 0 " +
+        		"and estado_manual = 0 " +
+        		"and st_y(the_geom) > 1 " ;
 
         
        
         List<Entidad> entidades = null; 
         try (Statement  stmt = Database.getConnection().createStatement();
-        	ResultSet resultSet = stmt.executeQuery(query);){        	
+        	ResultSet resultSet = stmt.executeQuery(query);){
         	entidades = EntidadDAO.getInstance().getListFromRs(resultSet);
         }
         
-        final List<Entity> entidadesOsm = new ArrayList<Entity>();
         final List<Entity> entidadesIne = new ArrayList<Entity>();
-        final List<Entity> actualizadas = new ArrayList<Entity>();
+        final List<Entity> entidadesCapitalesIne = new ArrayList<Entity>();
         for (Entidad entidad: entidades) {            
             final List<Node> nodos = NodeDAO.getInstance().getPoblaciones(entidad.getLon(), entidad.getLat(), 0.02);
-            for (Node nodo : nodos){
-                String nombreOsm = null;
-                if (nodo.containsTag(KEY_NAME)){
-                    nombreOsm = nodo.getTag(KEY_NAME);
-                }
-                else if (nodo.containsTag(KEY_NAME_ES)){
-                    nombreOsm = nodo.getTag(KEY_NAME_ES);
-                }
-                //Log.log("INE:" + entidad.getCodine() + ":" + entidad.getName());
-                //Log.log("OSM:" + nodo.getId() + ":" + nombreOsm);
-                
-                if (entidad.getCodine().equals(nodo.getTag(KEY_REF_INE))){
-                	actualizarIguales(entidad, nodo);
-                }                
-                if (ComparaCadenas.iguales(entidad.getName(), nombreOsm)){
-                   actualizarIguales(entidad, nodo); 
-                }
-                else {
-                    if (!entidadesOsm.contains(nodo)){
-                        entidadesOsm.add(nodo);
-                        final Node ine = new Node();
-                        ine.setId(contador--);
-                        entidad.setDecisionNombre("OSM");
-                        Objetivo3.actualiza(ine, entidad, false);           
-                        ine.setModified(true);
-                        if (!entidadesIne.contains(ine)){
-                            entidadesIne.add(ine);
-                        }
-                        final Node nodo2 = NodeDAO.getInstance().getNode(nodo.getId());
-                        Objetivo3.actualiza(nodo2, entidad, false);
-                        if (!actualizadas.contains(nodo2) && nodo2.isModified()){
-                            actualizadas.add(nodo2);
-                        }
-                    }
-                }
-            }            
+			boolean encontrado = false;
+			for (Node nodo : nodos) {
+				String nombreOsm = null;
+				if (nodo.containsTag(KEY_NAME)) {
+					nombreOsm = nodo.getTag(KEY_NAME);
+				} else if (nodo.containsTag(KEY_NAME_ES)) {
+					nombreOsm = nodo.getTag(KEY_NAME_ES);
+				}
+
+				if (entidad.getCodine().equals(nodo.getTag(KEY_REF_INE))) {
+					actualizarIguales(entidad, nodo);
+					encontrado = true;
+					break;
+				} else if (ComparaCadenas.iguales(entidad.getName(), nombreOsm)) {
+					actualizarIguales(entidad, nodo);
+					encontrado = true;
+					break;
+				}
+			}
+			if (!encontrado) {
+				Node ine = Objetivo3.entidad2node(entidad);
+				ine.setModified(true);
+				if (ine.containsTag(KEY_CAPITAL)){				
+					entidadesCapitalesIne.add(ine);
+				}
+				else {
+					entidadesIne.add(ine);
+				}
+			}
+		}
+        Log.log("Exportando entidades pendientes ine (objetivo 1) :" + entidadesCapitalesIne.size());
+        if (!entidadesCapitalesIne.isEmpty()){
+	        try (OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo1.pendientes_ine"))); ){
+	             XMLExporter.export(entidadesCapitalesIne, salida,true);
+	        }
         }
-        
-        Log.log("Exportando entidades pendientes osm:" + entidadesOsm.size());
-        try (OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.pendientes_osm")));){ 
-        	XMLExporter.export(entidadesOsm, salida,true);
-        }
-        Log.log("Exportando entidades pendientes ine:" + entidadesIne.size());
-        try (OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.pendientes_ine"))); ){
-             XMLExporter.export(entidadesIne, salida,true);
-        }
-        Log.log("Exportando entidades a actualizar:" + actualizadas.size());
-        try (OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.subir")));){ 
-        	XMLExporter.export(actualizadas, salida,true);
+        Log.log("Exportando entidades pendientes ine (objetivo 2) :" + entidadesIne.size());
+        if (!entidadesIne.isEmpty()){
+	        try (OutputStream salida = new GZIPOutputStream(new FileOutputStream(Config.getInstance().getOsmOutputFile("objetivo2.pendientes_ine"))); ){
+	             XMLExporter.export(entidadesIne, salida,true);
+	        }
         }
     }
     
     private static void actualizarIguales(final Entidad entidad, final Node nodo) throws SQLException{
-    	//Log.log("Actualizando:" + entidad.getCodine() + ":" + nodo.getId()); 
         entidad.setOsmid(nodo.getId());
         EntidadDAO.getInstance().updateOsmId(entidad);
     }

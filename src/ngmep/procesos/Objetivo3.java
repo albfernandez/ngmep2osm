@@ -83,7 +83,11 @@ public final class Objetivo3 {
     }
     
     
-    public static Entity entidad2node(final Entidad ine, final String error) {
+    public static Node entidad2node(final Entidad ine) {
+    	return entidad2node(ine, null);
+    }
+    
+    public static Node entidad2node(final Entidad ine, final String error) {
         final Node osm = new Node();
         osm.setId(--iderror);
         osm.setLat(ine.getLat());
@@ -113,9 +117,9 @@ public final class Objetivo3 {
         osm.setTag(KEY_IS_IN_PROVINCE_CODE, ine.getCodigoProvincia());
         estableceNombresAlternativos(osm, ine);
         osm.setTag(KEY_NAME, ine.getName());
-        if (!StringUtils.isBlank(error)) {
-                osm.setTag(KEY_FIXME, error);
-        }
+		if (!StringUtils.isBlank(error)) {
+			osm.setTag(KEY_FIXME, error);
+		}
         return osm;
     }
     
