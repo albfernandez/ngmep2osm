@@ -20,6 +20,14 @@ select id, version, user_id, tstamp, changeset_id, 'way',
 from ways w
 where exists (select 1 from way_tags t where t.way_id = w.id and t.k = 'place' and t.v in ('city','town', 'village', 'hamlet', 'suburb','isolated_dwelling'));
 
+
+update poblaciones_osm o
+set cod_ine = (select t.v from node_tags t where t.node_id = o.id and t.k = 'ref:ine')
+where o.tipo = 'node';
+
+update poblaciones_osm o 
+set cod_ine = (select t.v from way_tags t where t.way_id = o.id and t.k = 'ref:ine')
+where o.tipo = 'way';
 -- way_nodes way_id, node_id , sequence_id
 
 -- Recreamos el indice

@@ -42,7 +42,6 @@ Objetivo1 (TERMINADO)
 
 Objetivo2 ()
 	Importar otras poblaciones no capitales que no estén presentes en OSM.
-	Nota: el programa hace 1 y 2 juntos.
 
 Objetivo3 ()
 	Aportar datos (código INE, población, elevación) a las entidades presentes en OSM.

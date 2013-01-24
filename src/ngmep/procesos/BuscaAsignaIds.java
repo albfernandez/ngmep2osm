@@ -81,6 +81,7 @@ public final class BuscaAsignaIds {
         final List<Entity> entidadesIne = new ArrayList<Entity>();
         final List<Entity> entidadesCapitalesIne = new ArrayList<Entity>();
         for (Entidad entidad: entidades) {            
+        	// Buscamos por proximidad
             final List<Entity> poblaciones = PoblacionDAO.getInstance().getPoblaciones(entidad.getLon(), entidad.getLat(), 0.03);
 			boolean encontrado = false;
 			for (Entity entity : poblaciones) {
@@ -101,6 +102,17 @@ public final class BuscaAsignaIds {
 					break;
 				}
 			}
+			// Buscamos directamente por codigo INE
+			if (!encontrado) {
+				try {
+					Entity poblacion = PoblacionDAO.getInstance().getPoblacionCodIne(entidad.getCodine());
+					actualizarIguales(entidad, poblacion);					
+				}
+				catch (Exception e){
+					// Lo ignoramos
+				}
+			}
+			
 			if (!encontrado) {
 				Node ine = Objetivo3.entidad2node(entidad);
 				ine.setModified(true);

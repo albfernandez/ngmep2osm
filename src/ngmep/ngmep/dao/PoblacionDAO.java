@@ -57,4 +57,24 @@ public class PoblacionDAO {
     	
     	return lista;
     }
+
+	public Entity getPoblacionCodIne(String codine) throws Exception {
+		String query = "select id, version, user_id, tstamp, changeset_id, st_x(geom) as lon, st_y(geom) as lat, tipo from poblaciones_osm "
+				+ " where 1=1 " + " and cod_ine = ?";
+		List<Entity> lista = new ArrayList<Entity>();
+		try (PreparedStatement statement = Database.getConnection()
+				.prepareStatement(query);) {
+			statement.setString(1, codine);
+			try (ResultSet resultSet = statement.executeQuery();) {
+				lista = getResults(resultSet);
+			}
+		}
+		if (lista.size() > 1) {
+			throw new Exception("Demasiados resultados");
+		}
+		if (lista.size() == 0) {
+			throw new Exception("Sin resultados");
+		}
+		return lista.get(0);
+	}
 }

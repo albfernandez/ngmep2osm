@@ -4,7 +4,8 @@ CREATE TABLE poblaciones_osm (
     user_id int NOT NULL,
     tstamp timestamp without time zone NOT NULL,
     changeset_id bigint NOT NULL,
-    tipo char(5)
+    tipo char(5),
+    cod_ine char(64)
 );
 
 SELECT AddGeometryColumn('poblaciones_osm', 'geom', 4326, 'POINT', 2);
